@@ -15,8 +15,10 @@ public class ControllerState2D
     public bool IsFacingRight { get; set; }
     public bool HasBeenPushed { get; set; }
     public List<GameObject> pushedBy = new List<GameObject>(8);
+    public GameObject standingOn;
     public bool DisablePush = false;
     public int timePushed;
+    public bool HasMoved = false;
 
 
     public bool HasCollisions { get { return IsCollidingDown || IsCollidingLeft || IsCollidingRight || IsCollidingUp; } }
@@ -24,6 +26,7 @@ public class ControllerState2D
     public void Reset()
     {
         IsMovingUpSlope =
+            HasMoved =
             IsMovingDownSlope =
             IsCollidingLeft =
             IsCollidingRight =
@@ -32,6 +35,7 @@ public class ControllerState2D
             HasBeenPushed = false;
 
         timePushed = 0;
+        standingOn = null;
         pushedBy.Clear();
         SlopeAngle = 0;
     }

@@ -5,9 +5,11 @@ using System.Linq;
 
 public class SuperActor : MonoBehaviour {
 
+
     public Vector2 Velocity;
     public ControllerState2D _ControllerState;
 
+    //Actor Parameters controlls things like Gravity, how far things get knocked back and other things. It can be overrided during gameplay by setting _overrideParamaters
     public ActorParameters DefaultParamters;
     public ActorParameters Parameters { get { return _overrideParameters ?? DefaultParamters; } }
     public bool Active = true;
@@ -17,9 +19,11 @@ public class SuperActor : MonoBehaviour {
     private Transform _transform;
     private List<CollisionDetails> collisionDetails = new List<CollisionDetails>(32);
     private RaycastHit2D[] allRayHits = new RaycastHit2D[32];
+    //The corners of our box collider.
     private Vector2 _cornerBottomLeft, _cornerTopLeft, _cornerBottomRight;
     private float _verticalDistanceBetweenArrays, _horizontalDistanceBetweenArrays;
     private Vector2 knockBackVelocity;
+
 
     private const float skinWidth = 1f;
     private const int verticalRays = 4;
@@ -51,11 +55,16 @@ public class SuperActor : MonoBehaviour {
             handleKnockBack();
             handleMovement(knockBackVelocity);
             handleMovement(Velocity * Time.deltaTime);
+            _ControllerState.HasMoved = true;
+            Vector2 platformVelocity = handlePlatforms();
+            moveHorizontally(ref platformVelocity.x);
         }
     }
 
     private void handleMovement(Vector2 deltaMovement)
     {
+        //Here is where the magic happens. Through many raycasts our object is capable of movement.
+
         _ControllerState.Reset();
 
         if (Mathf.Abs(deltaMovement.x) > .02f)
@@ -184,7 +193,7 @@ public class SuperActor : MonoBehaviour {
                 {
                     if (item.Go.GetComponent<SuperActor>()._ControllerState.timePushed > 50)
                     {
-                        Debug.Log("YOOOO");
+                        Debug.Log("A object has collided over 50 times in one frame. fuck me");
                         item.Go.GetComponent<SuperActor>().Active = false;
                         GameObject.Destroy(item.Go);
                         continue;
@@ -272,6 +281,10 @@ public class SuperActor : MonoBehaviour {
             else
             {
                 _ControllerState.IsCollidingDown = true;
+                if (_ControllerState.standingOn == null)
+                {
+                    _ControllerState.standingOn = item.Go;
+                }
                 SetVerticalVelocity(0f);
             }
             if (!item.Movable)
@@ -323,5 +336,31 @@ public class SuperActor : MonoBehaviour {
         _ControllerState.pushedBy.Clear();
         _transform.Translate(0, deltaMovementY, 0, Space.World);
         calculateRayOrigins();
+    }
+
+    private Vector2 handlePlatforms()
+    {
+        if (Parameters.IgnorePlatforms)
+        {
+            return Vector2.zero;
+        }
+
+        if (_ControllerState.standingOn != null)
+        {
+
+            if (_ControllerState.standingOn.GetComponent<SuperActor>())
+            {
+
+                Vector2 vel = _ControllerState.standingOn.GetComponent<SuperActor>().Velocity * Time.deltaTime;
+                if (Parameters.FreezeX)
+                    vel.x = 0;
+                if (Parameters.FreezeY)
+                    vel.y = 0;
+
+                return vel;
+            }
+        }
+
+        return Vector2.zero;
     }
 }
