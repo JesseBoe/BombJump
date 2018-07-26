@@ -29,6 +29,7 @@ public class SuperActor : MonoBehaviour {
     void Start ()
     {
         _ControllerState = new ControllerState2D();
+        _ControllerState.IsFacingRight = true;
         _transform = gameObject.transform;
         Velocity = Vector2.zero;
         _collider = gameObject.GetComponent<BoxCollider2D>();

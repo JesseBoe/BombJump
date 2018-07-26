@@ -6,6 +6,7 @@ using UnityEditor;
 public class SuperPlayer : MonoBehaviour
 {
     public SuperActor player;
+    public GameObject GO_PlayerSprite;
     public CactimanParameters CactiParameters;
     public CactimanParameters.PlayerState State;
 
@@ -15,24 +16,23 @@ public class SuperPlayer : MonoBehaviour
     private float dashIn;
     private float dashTime;
     private int normalizedHorizontal;
-    public Sprite[] sprites;
+    private Animator animator;
 
 	// Use this for initialization
 	void Start () {
         jumpIn = CactiParameters.JumpFrequency;
-        player._ControllerState.IsFacingRight = true;
-
     }
 	
 	// Update is called once per frame
 	void Update()
     {
+        bool hasjumped = false;
         jumpIn -= Time.deltaTime;
         if (Input.GetKeyDown(KeyCode.Space) && canJump())
         {
-            Debug.Log("JUMPU");
             player.SetVerticalVelocity(CactiParameters.JumpMagnitude);
             jumpIn = CactiParameters.JumpFrequency;
+            hasjumped = true;
         }
 
         normalizedHorizontal = 0;
@@ -66,20 +66,35 @@ public class SuperPlayer : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
-            Vector3 pos = new Vector3(Input.mousePosition.x - 320, Input.mousePosition.y - 180, 0f);
+            Vector3 pos = new Vector3(Input.mousePosition.x - 320, Input.mousePosition.y - 180, -20f);
             Instantiate(BombPrefab, pos, Quaternion.identity);
+        }
+
+        if (hasjumped)
+        {
+            GO_PlayerSprite.GetComponent<Animator>().Play("Jump");
+        }
+        else if (normalizedHorizontal != 0 && State == CactimanParameters.PlayerState.FullControll && player._ControllerState.IsGrounded && jumpIn != CactiParameters.JumpFrequency && jumpIn <= CactiParameters.JumpFrequency -.2f)
+        {
+            GO_PlayerSprite.GetComponent<Animator>().Play("Run");
+        }
+        else if (jumpIn != CactiParameters.JumpFrequency && player._ControllerState.IsGrounded && jumpIn <= CactiParameters.JumpFrequency - .2f)
+        {
+            GO_PlayerSprite.GetComponent<Animator>().Play("Idle");
         }
 
         if (player._ControllerState.IsFacingRight)
         {
-            gameObject.GetComponent<SpriteRenderer>().sprite = sprites[1];
+            GO_PlayerSprite.GetComponent<SpriteRenderer>().flipX = false;
+            GO_PlayerSprite.transform.position = transform.position;
         }
         else
         {
-            gameObject.GetComponent<SpriteRenderer>().sprite = sprites[0];
+            GO_PlayerSprite.GetComponent<SpriteRenderer>().flipX = true;
+            GO_PlayerSprite.transform.position = transform.position + new Vector3(24, 0, 0);
         }
 
-        player.SetHorizontalVeloicty(normalizedHorizontal * 400);
+        player.SetHorizontalVeloicty(normalizedHorizontal * 150);
     }
 
     public void Dash(int normalizedHorizontal)

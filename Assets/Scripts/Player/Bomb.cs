@@ -50,8 +50,7 @@ public class Bomb : MonoBehaviour {
                 GoExplosion.transform.SetParent(null);
                 Vector2 offSet = new Vector2(56, 67);
                 Vector2 center = (Vector2)GoExplosion.transform.position + offSet;
-                var explosionHitList = Physics2D.CircleCastAll(center, _parameters.EffectiveRange, Vector2.zero, 0f, LayerMask.GetMask("Player", "Bomb"), -15f, 15f);
-
+                var explosionHitList = Physics2D.CircleCastAll(center, _parameters.EffectiveRange, Vector2.zero, 0f, LayerMask.GetMask("Player", "Bomb"), -40f, 5f);
                 if (explosionHitList.Length > 0)
                 {
                     foreach (var rayCastHit in explosionHitList)
