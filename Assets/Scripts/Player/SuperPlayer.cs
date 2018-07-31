@@ -6,17 +6,20 @@ using UnityEditor;
 public class SuperPlayer : MonoBehaviour
 {
     public SuperActor player;
+    public SuperActor heldObject;
     public GameObject GO_PlayerSprite;
     public CactimanParameters CactiParameters;
     public CactimanParameters.PlayerState State;
 
     public GameObject BombPrefab;
+    public GameObject StarPrefab;
 
     private float jumpIn;
     private float dashIn;
     private float dashTime;
     private int normalizedHorizontal;
     private Animator animator;
+    private bool holdingObject;
 
 	// Use this for initialization
 	void Start () {
@@ -36,14 +39,14 @@ public class SuperPlayer : MonoBehaviour
         }
 
         normalizedHorizontal = 0;
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.LeftArrow))
         {
             normalizedHorizontal += -1;
             //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
             if (State == CactimanParameters.PlayerState.FullControll)
                 player._ControllerState.IsFacingRight = false;
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.RightArrow))
         {
             normalizedHorizontal += 1;
             //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
@@ -68,6 +71,13 @@ public class SuperPlayer : MonoBehaviour
         {
             Vector3 pos = new Vector3(Input.mousePosition.x - 320, Input.mousePosition.y - 180, -20f);
             Instantiate(BombPrefab, pos, Quaternion.identity);
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            holdingObject = true;
+            Vector3 pos = new Vector3(transform.position.x -4, transform.position.y + 9f, transform.position.z + 1f);
+            heldObject = Instantiate(StarPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
         }
 
         if (hasjumped)
@@ -95,6 +105,60 @@ public class SuperPlayer : MonoBehaviour
         }
 
         player.SetHorizontalVeloicty(normalizedHorizontal * 150);
+        if (holdingObject && heldObject != null)
+        {
+            if (Input.GetKey(KeyCode.S))
+            {
+                heldObject.transform.parent.position = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1);
+            }
+            else if (heldObject.GetComponent<Star>().DoneSpawn)
+            {
+                //Throwing
+                Vector2 throwVelocity = new Vector2();
+
+                if (player._ControllerState.IsFacingRight)
+                {
+                    if (Input.GetKey(KeyCode.UpArrow))
+                    {
+                        throwVelocity = new Vector2(150, 400);
+                    }
+                    else if (Input.GetKey(KeyCode.DownArrow))
+                    {
+                        throwVelocity = new Vector2(150, -400);
+                    }
+                    else
+                    {
+                        throwVelocity = new Vector2(250, 200);
+                    }
+                }
+                else
+                {
+                    if (Input.GetKey(KeyCode.UpArrow))
+                    {
+                        throwVelocity = new Vector2(-150, 400);
+                    }
+                    else if (Input.GetKey(KeyCode.DownArrow))
+                    {
+                        throwVelocity = new Vector2(-150, -400);
+                    }
+                    else
+                    {
+                        throwVelocity = new Vector2(-250, 200);
+                    }
+                }
+
+                heldObject.GetComponentInChildren<Star>().Throw(throwVelocity);
+                holdingObject = false;
+                heldObject = null;
+            }
+            else
+            {
+                //LetGoTooEarly
+                GameObject.Destroy(heldObject.gameObject);
+                heldObject = null;
+                holdingObject = false;
+            }
+        }
     }
 
     public void Dash(int normalizedHorizontal)

@@ -16,6 +16,7 @@ public class ControllerState2D
     public bool HasBeenPushed { get; set; }
     public List<GameObject> pushedBy = new List<GameObject>(8);
     public GameObject standingOn;
+    public List<GameObject> standingOnMe = new List<GameObject>(8);
     public bool DisablePush = false;
     public int timePushed;
     public bool HasMoved = false;

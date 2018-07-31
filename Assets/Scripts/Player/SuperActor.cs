@@ -14,7 +14,7 @@ public class SuperActor : MonoBehaviour {
     public ActorParameters Parameters { get { return _overrideParameters ?? DefaultParamters; } }
     public bool Active = true;
 
-    private BoxCollider2D _collider;
+    public BoxCollider2D _Collider;
     private ActorParameters _overrideParameters;
     private Transform _transform;
     private List<CollisionDetails> collisionDetails = new List<CollisionDetails>(32);
@@ -24,10 +24,9 @@ public class SuperActor : MonoBehaviour {
     private float _verticalDistanceBetweenArrays, _horizontalDistanceBetweenArrays;
     private Vector2 knockBackVelocity;
 
-
     private const float skinWidth = 1f;
-    private const int verticalRays = 4;
-    private const int horizontalRays = 6;
+    public int verticalRays = 4;
+    public int horizontalRays = 6;
 
     // Use this for initialization
     void Start ()
@@ -36,10 +35,13 @@ public class SuperActor : MonoBehaviour {
         _ControllerState.IsFacingRight = true;
         _transform = gameObject.transform;
         Velocity = Vector2.zero;
-        _collider = gameObject.GetComponent<BoxCollider2D>();
+        _Collider = gameObject.GetComponent<BoxCollider2D>();
 
-        _horizontalDistanceBetweenArrays = (_collider.size.x - skinWidth * 2) / (verticalRays - 1);
-        _verticalDistanceBetweenArrays = (_collider.size.y - skinWidth * 2) / (horizontalRays - 1);
+        _horizontalDistanceBetweenArrays = (_Collider.size.x - skinWidth * 2) / (verticalRays - 1);
+        _verticalDistanceBetweenArrays = (_Collider.size.y - skinWidth * 2) / (horizontalRays - 1);
+        calculateRayOrigins();
+        GameObject.FindGameObjectWithTag("Manager").GetComponent<ActorManager>().Actors.Add(this);
+        
     }
 
     // Update is called once per frame
@@ -49,6 +51,11 @@ public class SuperActor : MonoBehaviour {
 
     private void FixedUpdate()
     {
+
+    }
+
+    public void Act()
+    {
         if (Active)
         {
             addVerticalVelocity(Parameters.Gravity);
@@ -56,8 +63,8 @@ public class SuperActor : MonoBehaviour {
             handleMovement(knockBackVelocity);
             handleMovement(Velocity * Time.deltaTime);
             _ControllerState.HasMoved = true;
-            Vector2 platformVelocity = handlePlatforms();
-            moveHorizontally(ref platformVelocity.x);
+
+            _ControllerState.standingOnMe.Clear();
         }
     }
 
@@ -67,24 +74,32 @@ public class SuperActor : MonoBehaviour {
 
         _ControllerState.Reset();
 
-        if (Mathf.Abs(deltaMovement.x) > .02f)
-            moveHorizontally(ref deltaMovement.x);
-        else
-            deltaMovement.x = 0f;
-
         if (Mathf.Abs(deltaMovement.y) > .02f)
             moveVertically(ref deltaMovement.y);
         else
             deltaMovement.y = 0f;
+
+        if (Mathf.Abs(deltaMovement.x) > .02f)
+            moveHorizontally(ref deltaMovement.x);
+        else
+        {
+            deltaMovement.x = 0f;
+        }
+    }
+
+    public void Remove()
+    {
+        GameObject.FindGameObjectWithTag("Manager").GetComponent<ActorManager>().Actors.Remove(this);
+        GameObject.Destroy(gameObject);
     }
 
     private void calculateRayOrigins()
     {
-        var center = new Vector2(_collider.offset.x, _collider.offset.y);
+        var center = new Vector2(_Collider.offset.x, _Collider.offset.y);
 
-        _cornerTopLeft = (Vector2)_transform.position + new Vector2(center.x - _collider.size.x / 2 + skinWidth, center.y + _collider.size.y / 2 - skinWidth);
-        _cornerBottomLeft = (Vector2)_transform.position + new Vector2(center.x - _collider.size.x / 2 + skinWidth, center.y - _collider.size.y / 2 + skinWidth);
-        _cornerBottomRight = (Vector2)_transform.position + new Vector2(center.x + _collider.size.x / 2 - skinWidth, center.y - _collider.size.y / 2 + skinWidth);
+        _cornerTopLeft = (Vector2)_transform.position + new Vector2(center.x - _Collider.size.x / 2 + skinWidth, center.y + _Collider.size.y / 2 - skinWidth);
+        _cornerBottomLeft = (Vector2)_transform.position + new Vector2(center.x - _Collider.size.x / 2 + skinWidth, center.y - _Collider.size.y / 2 + skinWidth);
+        _cornerBottomRight = (Vector2)_transform.position + new Vector2(center.x + _Collider.size.x / 2 - skinWidth, center.y - _Collider.size.y / 2 + skinWidth);
     }
 
     public void SetVelocity(Vector2 vel)
@@ -111,6 +126,11 @@ public class SuperActor : MonoBehaviour {
     {
         knockBackVelocity.x += force.x;
         addVerticalVelocity(force.y);
+    }
+
+    public float GetColliderHeightCord()
+    {
+        return _cornerTopLeft.y + skinWidth;
     }
 
     protected void handleKnockBack()
@@ -179,7 +199,7 @@ public class SuperActor : MonoBehaviour {
             {
                 _ControllerState.IsCollidingLeft = true;
             }
-            if (!item.Movable)
+            if (!item.Movable || item.Movable && item.Go.GetComponent<SuperActor>().Parameters.pushPriority > Parameters.pushPriority)
             {
                 if (item.DistanceToHit <= Mathf.Abs(deltaMovementX))
                 {
@@ -195,7 +215,7 @@ public class SuperActor : MonoBehaviour {
                     {
                         Debug.Log("A object has collided over 50 times in one frame. fuck me");
                         item.Go.GetComponent<SuperActor>().Active = false;
-                        GameObject.Destroy(item.Go);
+                        Remove();
                         continue;
                     }
 
@@ -225,6 +245,17 @@ public class SuperActor : MonoBehaviour {
         _transform.Translate(deltaMovementX, 0, 0, Space.World);
         //_transform.position = new Vector3(transform.position.x, Mathf.Round(transform.position.y), transform.position.z);
         calculateRayOrigins();
+
+        if (_ControllerState.standingOnMe.Count > 0)
+        {
+            foreach (var item in _ControllerState.standingOnMe)
+            {
+                if (!item.GetComponent<SuperActor>().Parameters.IgnorePlatforms)
+                {
+                    item.GetComponent<SuperActor>().moveHorizontally(ref deltaMovementX);
+                }
+            }
+        }
     }
 
     private void moveVertically(ref float deltaMovementY)
@@ -284,10 +315,13 @@ public class SuperActor : MonoBehaviour {
                 if (_ControllerState.standingOn == null)
                 {
                     _ControllerState.standingOn = item.Go;
+                    if (item.Go.GetComponent<SuperActor>() && !item.Go.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
+                    {
+                        item.Go.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
+                    }
                 }
-                SetVerticalVelocity(0f);
             }
-            if (!item.Movable)
+            if (!item.Movable || item.Movable && item.Go.GetComponent<SuperActor>().Parameters.pushPriority > Parameters.pushPriority)
             {
                 if (item.DistanceToHit <= Mathf.Abs(deltaMovementY))
                 {
@@ -306,7 +340,7 @@ public class SuperActor : MonoBehaviour {
                     {
                         Debug.Log("YOOOO");
                         item.Go.GetComponent<SuperActor>().Active = false;
-                        GameObject.Destroy(item.Go);
+                        Remove();
                         continue;
                     }
 
@@ -333,34 +367,30 @@ public class SuperActor : MonoBehaviour {
                 item.Go.GetComponent<SuperActor>()._ControllerState.DisablePush = false;
             }
         }
-        _ControllerState.pushedBy.Clear();
-        _transform.Translate(0, deltaMovementY, 0, Space.World);
-        calculateRayOrigins();
-    }
 
-    private Vector2 handlePlatforms()
-    {
-        if (Parameters.IgnorePlatforms)
+        if (_ControllerState.IsCollidingDown && Parameters.Bouncy)
         {
-            return Vector2.zero;
-        }
-
-        if (_ControllerState.standingOn != null)
-        {
-
-            if (_ControllerState.standingOn.GetComponent<SuperActor>())
+            if (Velocity.y < 0)
+            {
+                SetVerticalVelocity(Velocity.y * -Parameters.BounceDamp);
+                if (Mathf.Abs(Velocity.y) < 40f)
+                {
+                    SetVerticalVelocity(0);
+                }
+            }
+            else
             {
 
-                Vector2 vel = _ControllerState.standingOn.GetComponent<SuperActor>().Velocity * Time.deltaTime;
-                if (Parameters.FreezeX)
-                    vel.x = 0;
-                if (Parameters.FreezeY)
-                    vel.y = 0;
-
-                return vel;
             }
         }
 
-        return Vector2.zero;
+        else if (_ControllerState.IsCollidingDown)
+        {
+            SetVerticalVelocity(0);
+        }
+
+        _ControllerState.pushedBy.Clear();
+        _transform.Translate(0, deltaMovementY, 0, Space.World);
+        calculateRayOrigins();          
     }
 }

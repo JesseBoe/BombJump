@@ -8,6 +8,8 @@ public class ActorParameters
     public LayerMask layerMask;
 
     public bool Pushable = false;
+    public int pushPriority = 0;
+    public bool Bouncy = false;
     public bool IgnorePlatforms = false;
     public bool FreezeY = false;
     public bool FreezeX = false;
@@ -19,4 +21,5 @@ public class ActorParameters
 
     public float Gravity = -50f;
     public float KnockBackDamp = .93f;
+    public float BounceDamp = .9f;
 }

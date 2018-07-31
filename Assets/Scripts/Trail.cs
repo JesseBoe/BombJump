@@ -4,23 +4,13 @@ using UnityEngine;
 
 public class Trail : MonoBehaviour
 {
-    private SpriteRenderer _spriteRenderer;
-    public GameObject Self;
-
     private float timePassed;
 
 	// Use this for initialization
 	void Start ()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteRenderer.color = Color.red;
         timePassed = 0f;
 	}
-
-    public void SetSprite(Sprite trailSprite)
-    {
-        Self.GetComponent<SpriteRenderer>().sprite = trailSprite;
-    }
 
     // Update is called once per frame
     void Update()
