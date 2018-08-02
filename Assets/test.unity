@@ -154,64 +154,8 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114437005437554620, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95,
         type: 2}
-      propertyPath: DefaultParamters.layerMask.m_Bits
-      value: 17920
-      objectReference: {fileID: 0}
-    - target: {fileID: 4287602474332134, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_LocalScale.x
+      propertyPath: DefaultParamters.StarSnap
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4287602474332134, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4287602474332134, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4287602474332134, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4840208237004850, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4840208237004850, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4840208237004850, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4840208237004850, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4840208237004850, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114437005437554620, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95,
-        type: 2}
-      propertyPath: DefaultParamters.pushPriority
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114437005437554620, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95,
-        type: 2}
-      propertyPath: DefaultParamters.Bouncy
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114760303228709054, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95,
-        type: 2}
-      propertyPath: StarPrefab
-      value: 
-      objectReference: {fileID: 1820561334764436, guid: 0404e8cbc6531564183055b4dd241e61,
-        type: 2}
-    - target: {fileID: 1906400737318040, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}
-      propertyPath: m_TagString
-      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 83f6e9ef6eac13442bc0c13ba4a3bc95, type: 2}

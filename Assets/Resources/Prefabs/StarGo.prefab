@@ -275,7 +275,7 @@ MonoBehaviour:
     FreezeX: 0
     MaxVelocity: {x: 3.4028235e+38, y: 3.4028235e+38}
     SlopeLimit: 30
-    Gravity: -15
+    Gravity: -16
     KnockBackDamp: 0
     BounceDamp: 0.9
   Active: 1

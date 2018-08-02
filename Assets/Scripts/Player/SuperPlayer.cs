@@ -20,6 +20,7 @@ public class SuperPlayer : MonoBehaviour
     private int normalizedHorizontal;
     private Animator animator;
     private bool holdingObject;
+    private float timeInAir;
 
 	// Use this for initialization
 	void Start () {
@@ -29,11 +30,30 @@ public class SuperPlayer : MonoBehaviour
 	// Update is called once per frame
 	void Update()
     {
+        GetInput();
+    }
+
+    private void GetInput()
+    {
+        if (player._ControllerState.IsGrounded)
+        {
+            timeInAir = 0f;
+        }
+        else
+        {
+            timeInAir += Time.deltaTime;
+        }
         bool hasjumped = false;
         jumpIn -= Time.deltaTime;
+        if (jumpIn < 0)
+        {
+            player.Parameters.StarSnap = true;
+        }
         if (Input.GetKeyDown(KeyCode.Space) && canJump())
         {
             player.SetVerticalVelocity(CactiParameters.JumpMagnitude);
+            player.Parameters.StarSnap = false;
+            //player.addVerticalVelocity(CactiParameters.JumpMagnitude);
             jumpIn = CactiParameters.JumpFrequency;
             hasjumped = true;
         }
@@ -76,7 +96,7 @@ public class SuperPlayer : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             holdingObject = true;
-            Vector3 pos = new Vector3(transform.position.x -4, transform.position.y + 9f, transform.position.z + 1f);
+            Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
             heldObject = Instantiate(StarPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
         }
 
@@ -84,7 +104,7 @@ public class SuperPlayer : MonoBehaviour
         {
             GO_PlayerSprite.GetComponent<Animator>().Play("Jump");
         }
-        else if (normalizedHorizontal != 0 && State == CactimanParameters.PlayerState.FullControll && player._ControllerState.IsGrounded && jumpIn != CactiParameters.JumpFrequency && jumpIn <= CactiParameters.JumpFrequency -.2f)
+        else if (normalizedHorizontal != 0 && State == CactimanParameters.PlayerState.FullControll && player._ControllerState.IsGrounded && jumpIn != CactiParameters.JumpFrequency && jumpIn <= CactiParameters.JumpFrequency - .2f)
         {
             GO_PlayerSprite.GetComponent<Animator>().Play("Run");
         }
@@ -147,14 +167,14 @@ public class SuperPlayer : MonoBehaviour
                     }
                 }
 
-                heldObject.GetComponentInChildren<Star>().Throw(throwVelocity);
+                heldObject.GetComponentInChildren<Star>().Throw(throwVelocity); //eventually we will need to make a script called throwable, attach it to bomb and star and any other powerups.
                 holdingObject = false;
                 heldObject = null;
             }
             else
             {
                 //LetGoTooEarly
-                GameObject.Destroy(heldObject.gameObject);
+                heldObject.GetComponent<SuperActor>().Remove();
                 heldObject = null;
                 holdingObject = false;
             }
@@ -215,8 +235,9 @@ public class SuperPlayer : MonoBehaviour
             {
                 return true;
             }
-            else if (player._ControllerState.IsGrounded && CactiParameters.JumpRestrictions == CactimanParameters.JumpBehavior.CanJumpOnGround)
+            else if (timeInAir < .1f && CactiParameters.JumpRestrictions == CactimanParameters.JumpBehavior.CanJumpOnGround)
             {
+                Debug.Log("jumpu");
                 return true;
             }
         }

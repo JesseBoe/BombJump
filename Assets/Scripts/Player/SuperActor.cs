@@ -41,7 +41,6 @@ public class SuperActor : MonoBehaviour {
         _verticalDistanceBetweenArrays = (_Collider.size.y - skinWidth * 2) / (horizontalRays - 1);
         calculateRayOrigins();
         GameObject.FindGameObjectWithTag("Manager").GetComponent<ActorManager>().Actors.Add(this);
-        
     }
 
     // Update is called once per frame
@@ -58,6 +57,11 @@ public class SuperActor : MonoBehaviour {
     {
         if (Active)
         {
+            if (Parameters.StarSnap)
+            {
+                starRide();
+            }
+
             addVerticalVelocity(Parameters.Gravity);
             handleKnockBack();
             handleMovement(knockBackVelocity);
@@ -329,6 +333,17 @@ public class SuperActor : MonoBehaviour {
                     {
                         deltaMovementY = item.DistanceToHit * rayDirection.y;
                         max = Mathf.Abs(deltaMovementY);
+                        if (_ControllerState.IsCollidingUp && Velocity.y > 0)
+                        {
+                            if (Parameters.Bouncy)
+                            {
+                                Velocity.y *= -1f;
+                            }
+                            else
+                            {
+                                Velocity.y = 0;
+                            }
+                        }
                     }
                 }
             }
@@ -392,5 +407,41 @@ public class SuperActor : MonoBehaviour {
         _ControllerState.pushedBy.Clear();
         _transform.Translate(0, deltaMovementY, 0, Space.World);
         calculateRayOrigins();          
+    }
+
+    private void starRide()
+    {
+        calculateRayOrigins();
+        var rayDistance = 14f + skinWidth;
+        var rayDirection = Vector2.down;
+        var rayOrigin = _cornerBottomLeft;
+
+        if (_ControllerState.standingOn != null && _ControllerState.standingOn.GetComponent<Star>())
+        {
+            _ControllerState.isStarRiding = true;
+        }
+
+        if (_ControllerState.isStarRiding)
+        {
+            bool stillOnStar = false;
+            for (int i = 0; i < verticalRays; i++)
+            {
+                var rayVector = new Vector2(rayOrigin.x + (i * _horizontalDistanceBetweenArrays), rayOrigin.y);
+                RaycastHit2D ray = Physics2D.Raycast(rayVector, rayDirection, rayDistance, LayerMask.GetMask("Star"));
+
+                if (ray)
+                {
+                    if (!ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
+                    {
+                        Debug.Log("added");
+                        ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
+                        addVerticalVelocity(-500f);
+                        stillOnStar = true;
+                    }
+                    break;
+                }
+            }
+            _ControllerState.isStarRiding = stillOnStar;
+        }
     }
 }

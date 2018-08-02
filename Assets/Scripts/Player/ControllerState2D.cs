@@ -20,6 +20,7 @@ public class ControllerState2D
     public bool DisablePush = false;
     public int timePushed;
     public bool HasMoved = false;
+    public bool isStarRiding = false;
 
 
     public bool HasCollisions { get { return IsCollidingDown || IsCollidingLeft || IsCollidingRight || IsCollidingUp; } }
