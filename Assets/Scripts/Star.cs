@@ -15,6 +15,8 @@ public class Star : MonoBehaviour {
 
     private float timePassed;
     private Vector2 throwVelocity;
+    private float timePassedSinceThrown = 0;
+    private List<string> tempLayerMasks = new List<string>();
 
     private enum starState
     {
@@ -47,6 +49,11 @@ public class Star : MonoBehaviour {
         {
             DoneSpawn = true;
         }
+
+        if (thrown)
+        {
+            timePassedSinceThrown += Time.deltaTime;
+        }
     }
 
     // Update is called once per frame
@@ -64,12 +71,40 @@ public class Star : MonoBehaviour {
         {
             if (gameObject.layer == LayerMask.NameToLayer("Intangible"))
             {
-                RaycastHit2D hit = Physics2D.BoxCast((Vector2)transform.position + _actor._Collider.offset, _actor._Collider.size, 0, Vector2.zero, Mathf.Infinity, defaultmask);
-                if (hit)
+                RaycastHit2D[] hits = Physics2D.BoxCastAll((Vector2)transform.position + _actor._Collider.offset, _actor._Collider.size, 0, Vector2.zero, Mathf.Infinity, defaultmask);
+                if (hits.Length > 0)
                 {
+                    bool ground = false;
+                    bool player = false;
+                    foreach (var item in hits)
+                    {
+                        if (item.transform.gameObject.layer == LayerMask.GetMask("Ground"))
+                        {
+                            ground = true;
+                        }
+                        if (item.transform.gameObject.layer == LayerMask.GetMask("Player"))
+                        {
+                            player = true;
+                        }
+                    }
+                    if (!ground)
+                    {
+                        if (!tempLayerMasks.Contains("Ground"))
+                        {
+                            tempLayerMasks.Add("Ground");
+                        }
+                    }
+                    if (!player)
+                    {
+                        if (!tempLayerMasks.Contains("Player") && timePassedSinceThrown > .1f)
+                        {
+                            tempLayerMasks.Add("Player");
+                        }
+                    }
 
+                    _actor.Parameters.layerMask = LayerMask.GetMask(tempLayerMasks.ToArray());
                 }
-                else
+                else if (timePassedSinceThrown > .1f)
                 {
                     _actor.Parameters.layerMask = defaultmask;
                     gameObject.layer = LayerMask.NameToLayer("Star");

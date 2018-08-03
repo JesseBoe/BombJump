@@ -399,7 +399,7 @@ public class SuperActor : MonoBehaviour {
             }
         }
 
-        else if (_ControllerState.IsCollidingDown)
+        else if (_ControllerState.IsCollidingDown && Velocity.y < 0)
         {
             SetVerticalVelocity(0);
         }
@@ -433,7 +433,6 @@ public class SuperActor : MonoBehaviour {
                 {
                     if (!ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
                     {
-                        Debug.Log("added");
                         ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
                         addVerticalVelocity(-500f);
                         stillOnStar = true;

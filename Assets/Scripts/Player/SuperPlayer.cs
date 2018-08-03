@@ -21,10 +21,14 @@ public class SuperPlayer : MonoBehaviour
     private Animator animator;
     private bool holdingObject;
     private float timeInAir;
+    private bool Jumping;
+    private float timeJump;
 
 	// Use this for initialization
 	void Start () {
         jumpIn = CactiParameters.JumpFrequency;
+        Jumping = false;
+        timeJump = 0;
     }
 	
 	// Update is called once per frame
@@ -45,17 +49,35 @@ public class SuperPlayer : MonoBehaviour
         }
         bool hasjumped = false;
         jumpIn -= Time.deltaTime;
-        if (jumpIn < 0)
-        {
-            player.Parameters.StarSnap = true;
-        }
+
         if (Input.GetKeyDown(KeyCode.Space) && canJump())
         {
-            player.SetVerticalVelocity(CactiParameters.JumpMagnitude);
+            //player.SetVerticalVelocity(CactiParameters.JumpMagnitude);
             player.Parameters.StarSnap = false;
             //player.addVerticalVelocity(CactiParameters.JumpMagnitude);
             jumpIn = CactiParameters.JumpFrequency;
+            player.Parameters.IgnorePlatforms = true;
             hasjumped = true;
+            Jumping = true;
+            timeJump = 0;
+        }
+
+        if (Jumping)
+        {
+            timeJump += Time.deltaTime;
+            if (player._ControllerState.IsCollidingUp)
+            {
+                timeJump += .21f;
+            }
+            if (Input.GetKey(KeyCode.Space) && timeJump <= .2)
+            {
+                player.SetVerticalVelocity(Mathf.Lerp(280, 330, timeJump * 5));
+            }
+            else
+            {
+                player.Parameters.StarSnap = true;
+                player.Parameters.IgnorePlatforms = false;
+            }
         }
 
         normalizedHorizontal = 0;
@@ -237,7 +259,6 @@ public class SuperPlayer : MonoBehaviour
             }
             else if (timeInAir < .1f && CactiParameters.JumpRestrictions == CactimanParameters.JumpBehavior.CanJumpOnGround)
             {
-                Debug.Log("jumpu");
                 return true;
             }
         }
