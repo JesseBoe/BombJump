@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class Star : MonoBehaviour {
 
-    bool thrown = false;
     public GameObject Player;
     public GameObject trailPrefab;
+    public GameObject starBlastPrefab;
     private SuperActor _actor;
     private Animator animator;
     private starState state;
     private LayerMask defaultmask;
-    public bool DoneSpawn;
 
     private float timePassed;
-    private Vector2 throwVelocity;
-    private float timePassedSinceThrown = 0;
-    private List<string> tempLayerMasks = new List<string>();
+    private List<string> checkCollides = new List<string>();
+    private List<int> keepChecking = new List<int>();
+    private Throwable throwable;
+
 
     private enum starState
     {
@@ -38,105 +38,141 @@ public class Star : MonoBehaviour {
         _actor.Parameters.layerMask = LayerMask.NameToLayer("Intangible");
         gameObject.layer = LayerMask.NameToLayer("Intangible");
         Player = GameObject.FindGameObjectWithTag("Player");
+        throwable = GetComponent<Throwable>();
         timePassed = 0;
-        DoneSpawn = false;
 	}
 
     void Update()
     {
         timePassed += Time.deltaTime;
-        if (timePassed > .5)
-        {
-            DoneSpawn = true;
-        }
-
-        if (thrown)
-        {
-            timePassedSinceThrown += Time.deltaTime;
-        }
     }
 
     // Update is called once per frame
     void FixedUpdate ()
     {
 
-        if (DoneSpawn && timePassed > .05f)
+        if (throwable.DoneSpawning && timePassed > .05f)
         {
             Instantiate(trailPrefab, new Vector3(transform.position.x + 16, transform.position.y + 16, transform.position.z + 5), Quaternion.identity);
             timePassed = 0f;
         }
-        
 
-        if (thrown)
+        if (throwable.Thrown)
         {
+
             if (gameObject.layer == LayerMask.NameToLayer("Intangible"))
             {
-                RaycastHit2D[] hits = Physics2D.BoxCastAll((Vector2)transform.position + _actor._Collider.offset, _actor._Collider.size, 0, Vector2.zero, Mathf.Infinity, defaultmask);
-                if (hits.Length > 0)
-                {
-                    bool ground = false;
-                    bool player = false;
-                    foreach (var item in hits)
-                    {
-                        if (item.transform.gameObject.layer == LayerMask.GetMask("Ground"))
-                        {
-                            ground = true;
-                        }
-                        if (item.transform.gameObject.layer == LayerMask.GetMask("Player"))
-                        {
-                            player = true;
-                        }
-                    }
-                    if (!ground)
-                    {
-                        if (!tempLayerMasks.Contains("Ground"))
-                        {
-                            tempLayerMasks.Add("Ground");
-                        }
-                    }
-                    if (!player)
-                    {
-                        if (!tempLayerMasks.Contains("Player") && timePassedSinceThrown > .1f)
-                        {
-                            tempLayerMasks.Add("Player");
-                        }
-                    }
-
-                    _actor.Parameters.layerMask = LayerMask.GetMask(tempLayerMasks.ToArray());
-                }
-                else if (timePassedSinceThrown > .1f)
-                {
-                    _actor.Parameters.layerMask = defaultmask;
-                    gameObject.layer = LayerMask.NameToLayer("Star");
-                }
+                adjustLayers();
             }
 
-            bool isGoingRight = throwVelocity.x > 0;
+            bool isGoingRight = throwable.ThrowVelocity.x > 0;
 
             if (isGoingRight)
             {
                 if (_actor._ControllerState.IsCollidingRight)
                 {
-                    throwVelocity.x *= -1;
+                    throwable.ThrowVelocity.x *= -1;
                 }
             }
             else
             {
                 if (_actor._ControllerState.IsCollidingLeft)
                 {
-                    throwVelocity.x *= -1;
+                    throwable.ThrowVelocity.x *= -1;
                 }
             }
 
-            _actor.SetHorizontalVeloicty(throwVelocity.x);
+            _actor.SetHorizontalVeloicty(throwable.ThrowVelocity.x);
+
+            foreach (var item in _actor._ControllerState.hasCollisionsWith)
+            {
+                if (item.layer == LayerMask.NameToLayer("Starblock"))
+                {
+                    item.GetComponent<StarBlock>().hit();
+                    Instantiate(starBlastPrefab, transform.position + new Vector3(16, 16, -1f), Quaternion.identity);
+                    removeStar();
+                }
+            }
         }
 	}
 
-    public void Throw(Vector2 velocity)
+    private void adjustLayers()
     {
-        thrown = true;
-        throwVelocity = velocity;
-        _actor.SetVerticalVelocity(velocity.y);
-        _actor.Active = true;
+        //This slowly activates collisions so that if spawned inside of another object everything works out.
+        RaycastHit2D[] hits = Physics2D.BoxCastAll((Vector2)transform.position + _actor._Collider.offset, _actor._Collider.size, 0, Vector2.zero, Mathf.Infinity, defaultmask);
+        if (hits.Length > 0)
+        {
+            keepChecking.Clear();
+            foreach (var item in hits)
+            {
+                if (!checkCollides.Contains(LayerMask.LayerToName(item.transform.gameObject.layer)))
+                {
+                    keepChecking.Add(item.transform.gameObject.layer);
+                }
+            }
+            for (int i = 0; i < 28; i++)
+            {
+                if ((defaultmask == (defaultmask | (1 << i))))
+                {
+                    if (!keepChecking.Contains(i))
+                    {
+                        checkCollides.Add(LayerMask.LayerToName(i));
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 28; i++)
+            {
+                if ((defaultmask == (defaultmask | (1 << i))))
+                {
+                    if (!checkCollides.Contains(LayerMask.LayerToName(i)))
+                    {
+                        checkCollides.Add(LayerMask.LayerToName(i));
+                    }
+                }
+            }
+            gameObject.layer = LayerMask.NameToLayer("Star");
+        }
+        _actor.Parameters.layerMask = LayerMask.GetMask(checkCollides.ToArray());
+
+        if (_actor.Parameters.layerMask == defaultmask)
+        {
+            gameObject.layer = LayerMask.NameToLayer("Star");
+        }
+    }
+
+    public void removeStar()
+    {
+        _actor.Remove();
+        GameObject.Destroy(transform.parent.gameObject);
+    }
+
+    void OnBecameInvisible()
+    {
+        if (throwable.Thrown)
+        {
+            if (isActiveAndEnabled)
+            {
+                StartCoroutine("destroyTimer");
+            }
+        }
+    }
+
+    private void OnBecameVisible()
+    {
+        StopCoroutine("destroyTimer");
+    }
+
+    IEnumerator destroyTimer()
+    {
+        float destroytime = 0;
+        while (destroytime < 1)
+        {
+            destroytime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        removeStar();
     }
 }

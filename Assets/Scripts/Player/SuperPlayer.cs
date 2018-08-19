@@ -13,19 +13,27 @@ public class SuperPlayer : MonoBehaviour
 
     public GameObject BombPrefab;
     public GameObject StarPrefab;
+    public GameObject DeathPrefab;
 
     private float jumpIn;
     private float dashIn;
     private float dashTime;
     private int normalizedHorizontal;
     private Animator animator;
-    private bool holdingObject;
+    private holdObjectType holdType;
     private float timeInAir;
     private bool Jumping;
     private float timeJump;
+    private float timeOnStar;
+
+    private enum holdObjectType
+    {
+        Nothing, Bomb, Star
+    }
 
 	// Use this for initialization
 	void Start () {
+        holdType = holdObjectType.Nothing;
         jumpIn = CactiParameters.JumpFrequency;
         Jumping = false;
         timeJump = 0;
@@ -34,7 +42,51 @@ public class SuperPlayer : MonoBehaviour
 	// Update is called once per frame
 	void Update()
     {
-        GetInput();
+        if (!player._ControllerState.isStarRiding)
+        {
+            timeOnStar = 0f;
+        }
+        else
+        {
+            timeOnStar += Time.deltaTime;
+        }
+        if (State == CactimanParameters.PlayerState.Dead)
+        {
+            GO_PlayerSprite.GetComponent<Animator>().Play("Die");
+            gameObject.layer = LayerMask.NameToLayer("Intangible");
+            player.Active = false;
+
+            switch (holdType)
+            {
+                case holdObjectType.Nothing:
+                    break;
+                case holdObjectType.Bomb:
+                    heldObject.GetComponent<Bomb>().removeBomb();
+                    break;
+                case holdObjectType.Star:
+                    heldObject.GetComponent<SuperActor>().Remove();
+                    break;
+                default:
+                    break;
+            }
+            heldObject = null;
+            holdType = holdObjectType.Nothing;
+        }
+        else
+        {
+            GetInput();
+            checkSpikes();
+        }
+    }
+
+    private void checkSpikes()
+    {
+        RaycastHit2D[] hits = Physics2D.BoxCastAll((Vector2)transform.position + player._Collider.offset, player._Collider.size, 0, Vector2.zero, Mathf.Infinity, LayerMask.GetMask("Spike", "Bullet"));
+        if (hits.Length > 0)
+        {
+            State = CactimanParameters.PlayerState.Dead;
+            Instantiate(DeathPrefab, transform.position + new Vector3(16f, 16f, -1f), Quaternion.identity);
+        }
     }
 
     private void GetInput()
@@ -96,6 +148,11 @@ public class SuperPlayer : MonoBehaviour
                 player._ControllerState.IsFacingRight = true;
         }
 
+        if (timeOnStar != 0 && timeOnStar <= .1f)
+        {
+            normalizedHorizontal = 0;
+        }
+
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             if (canDash())
@@ -115,11 +172,17 @@ public class SuperPlayer : MonoBehaviour
             Instantiate(BombPrefab, pos, Quaternion.identity);
         }
 
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S) && holdType == holdObjectType.Nothing)
         {
-            holdingObject = true;
+            holdType = holdObjectType.Star;
             Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
             heldObject = Instantiate(StarPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
+        }
+        if (Input.GetKeyDown(KeyCode.D) && holdType == holdObjectType.Nothing)
+        {
+            holdType = holdObjectType.Bomb;
+            Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
+            heldObject = Instantiate(BombPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
         }
 
         if (hasjumped)
@@ -147,13 +210,46 @@ public class SuperPlayer : MonoBehaviour
         }
 
         player.SetHorizontalVeloicty(normalizedHorizontal * 150);
-        if (holdingObject && heldObject != null)
+        if (holdType != holdObjectType.Nothing && heldObject != null)
         {
-            if (Input.GetKey(KeyCode.S))
+            bool buttonReleased = false;
+            switch (holdType)
             {
-                heldObject.transform.parent.position = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1);
+                case holdObjectType.Nothing:
+                    //This never happens
+                    break;
+
+                case holdObjectType.Bomb:
+
+                    heldObject.transform.position = new Vector3(transform.position.x - 20, transform.position.y - 2, transform.position.z + 1);
+                    if (Input.GetKey(KeyCode.D))
+                    {
+                        
+                    }
+                    else
+                    {
+                        buttonReleased = true;
+                    }
+                    break;
+
+                case holdObjectType.Star:
+
+                    heldObject.transform.parent.position = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1);
+                    if (Input.GetKey(KeyCode.S))
+                    {
+
+                    }
+                    else
+                    {
+                        buttonReleased = true;
+                    }
+                    break;
+
+                default:
+                    break;
             }
-            else if (heldObject.GetComponent<Star>().DoneSpawn)
+
+            if (heldObject.GetComponent<Throwable>().DoneSpawning && buttonReleased)
             {
                 //Throwing
                 Vector2 throwVelocity = new Vector2();
@@ -189,17 +285,33 @@ public class SuperPlayer : MonoBehaviour
                     }
                 }
 
-                heldObject.GetComponentInChildren<Star>().Throw(throwVelocity); //eventually we will need to make a script called throwable, attach it to bomb and star and any other powerups.
-                holdingObject = false;
+                heldObject.GetComponentInChildren<Throwable>().Throw(throwVelocity);
+                holdType = holdObjectType.Nothing;
                 heldObject = null;
             }
-            else
+            else if (buttonReleased)
             {
                 //LetGoTooEarly
-                heldObject.GetComponent<SuperActor>().Remove();
+                switch (holdType)
+                {
+                    case holdObjectType.Nothing:
+                        break;
+                    case holdObjectType.Bomb:
+                        heldObject.GetComponent<Bomb>().removeBomb();
+                        break;
+                    case holdObjectType.Star:
+                        heldObject.GetComponent<SuperActor>().Remove();
+                        break;
+                    default:
+                        break;
+                }
                 heldObject = null;
-                holdingObject = false;
+                holdType = holdObjectType.Nothing;
             }
+        }
+        else if (heldObject == null)
+        {
+            holdType = holdObjectType.Nothing;
         }
     }
 

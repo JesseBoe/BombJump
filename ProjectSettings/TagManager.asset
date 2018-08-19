@@ -24,9 +24,9 @@ TagManager:
   - Enemy
   - Star
   - Bullet
-  - 
-  - 
-  - 
+  - Spike
+  - Starblock
+  - MovingPlatform
   - 
   - 
   - 

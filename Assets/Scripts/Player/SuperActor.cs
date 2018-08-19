@@ -57,9 +57,11 @@ public class SuperActor : MonoBehaviour {
     {
         if (Active)
         {
+            _ControllerState.hasCollisionsWith.Clear();
             if (Parameters.StarSnap)
             {
                 starRide();
+                platRide();
             }
 
             addVerticalVelocity(Parameters.Gravity);
@@ -209,6 +211,7 @@ public class SuperActor : MonoBehaviour {
                 {
                     deltaMovementX = item.DistanceToHit * rayDirection.x;
                     max = Mathf.Abs(deltaMovementX);
+                    _ControllerState.hasCollisionsWith.Add(item.Go);
                 }
             }
             else
@@ -233,6 +236,7 @@ public class SuperActor : MonoBehaviour {
                         item.Go.GetComponent<SuperActor>().moveHorizontally(ref amountToMoveItem);
                         deltaMovementX = item.DistanceToHit * rayDirection.x + amountToMoveItem;
                         max = Mathf.Abs(deltaMovementX);
+                        _ControllerState.hasCollisionsWith.Add(item.Go);
                     }
                 }
             }
@@ -333,6 +337,7 @@ public class SuperActor : MonoBehaviour {
                     {
                         deltaMovementY = item.DistanceToHit * rayDirection.y;
                         max = Mathf.Abs(deltaMovementY);
+                        _ControllerState.hasCollisionsWith.Add(item.Go);
                         if (_ControllerState.IsCollidingUp && Velocity.y > 0)
                         {
                             if (Parameters.Bouncy)
@@ -366,9 +371,22 @@ public class SuperActor : MonoBehaviour {
                         item.Go.GetComponent<SuperActor>()._ControllerState.pushedBy.Add(gameObject);
                         float fullmove = (Mathf.Abs(rayDistance) - skinWidth);
                         float amountToMoveItem = (fullmove - item.DistanceToHit) * rayDirection.y;
+                        float moveItemMax = amountToMoveItem;
                         item.Go.GetComponent<SuperActor>().moveVertically(ref amountToMoveItem);
+                        if (amountToMoveItem + .01f < moveItemMax)
+                        {
+                            if (Parameters.Bouncy)
+                            {
+                                Velocity.y = 0;
+                            }
+                            else
+                            {
+                                Velocity.y = 0;
+                            }
+                        }
                         deltaMovementY = item.DistanceToHit * rayDirection.y + amountToMoveItem;
                         max = Mathf.Abs(deltaMovementY);
+                        _ControllerState.hasCollisionsWith.Add(item.Go);
                     }
 
                 }
@@ -441,6 +459,41 @@ public class SuperActor : MonoBehaviour {
                 }
             }
             _ControllerState.isStarRiding = stillOnStar;
+        }
+    }
+
+    private void platRide()
+    {
+        calculateRayOrigins();
+        var rayDistance = 14f + skinWidth;
+        var rayDirection = Vector2.down;
+        var rayOrigin = _cornerBottomLeft;
+
+        if (_ControllerState.standingOn != null && _ControllerState.standingOn.GetComponent<MovingPlatform>())
+        {
+            _ControllerState.isPlatRide = true;
+        }
+
+        if (_ControllerState.isPlatRide)
+        {
+            bool stillOnPlat = false;
+            for (int i = 0; i < verticalRays; i++)
+            {
+                var rayVector = new Vector2(rayOrigin.x + (i * _horizontalDistanceBetweenArrays), rayOrigin.y);
+                RaycastHit2D ray = Physics2D.Raycast(rayVector, rayDirection, rayDistance, LayerMask.GetMask("MovingPlatform"));
+
+                if (ray)
+                {
+                    if (!ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
+                    {
+                        ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
+                        addVerticalVelocity(-500f);
+                        stillOnPlat = true;
+                    }
+                    break;
+                }
+            }
+            _ControllerState.isPlatRide = stillOnPlat;
         }
     }
 }

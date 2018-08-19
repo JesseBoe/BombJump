@@ -21,7 +21,8 @@ public class ControllerState2D
     public int timePushed;
     public bool HasMoved = false;
     public bool isStarRiding = false;
-
+    public bool isPlatRide = false;
+    public List<GameObject> hasCollisionsWith = new List<GameObject>();
 
     public bool HasCollisions { get { return IsCollidingDown || IsCollidingLeft || IsCollidingRight || IsCollidingUp; } }
 

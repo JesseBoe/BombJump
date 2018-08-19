@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 61394501102874998}
   - component: {fileID: 114716971555890198}
   - component: {fileID: 114567896954019798}
+  - component: {fileID: 114748345026889874}
   m_Layer: 10
   m_Name: Bomb
   m_TagString: Untagged
@@ -120,12 +121,14 @@ MonoBehaviour:
     IgnorePlatforms: 0
     FreezeY: 0
     FreezeX: 0
+    StarSnap: 0
     MaxVelocity: {x: 3.4028235e+38, y: 3.4028235e+38}
     SlopeLimit: 30
     Gravity: -20
     KnockBackDamp: 0.97
     BounceDamp: 0.9
   Active: 1
+  _Collider: {fileID: 0}
   verticalRays: 4
   horizontalRays: 6
 --- !u!114 &114716971555890198
@@ -147,6 +150,22 @@ MonoBehaviour:
     MinKnockBack: {x: 16, y: 500}
     TimeToExplode: 5
     EffectiveRange: 48
+--- !u!114 &114748345026889874
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1785992177423722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20644868448dba4b8e09b372dcc8222, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Thrown: 0
+  ThrowVelocity: {x: 0, y: 0}
+  Player: {fileID: 0}
+  TimePassedSinceThrown: 0
+  DoneSpawning: 0
 --- !u!212 &212424379474267238
 SpriteRenderer:
   m_ObjectHideFlags: 1
