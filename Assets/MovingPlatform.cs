@@ -17,12 +17,12 @@ public class MovingPlatform : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log(TravelPoints.Count);
+
     }
 
     private void FixedUpdate()
     {
-        if (transform.position == TravelPoints[loc].position)
+        if ((Vector2)transform.position == (Vector2)TravelPoints[loc].position)
         {
             if (movingForward && loc < TravelPoints.Count - 1)
             {

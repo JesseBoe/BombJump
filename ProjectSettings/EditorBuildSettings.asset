@@ -4,4 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/TrainingGrounds.unity
+    guid: 1bf6c606d999bb34b9d4550f29e39fb5
+  m_configObjects: {}

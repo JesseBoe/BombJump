@@ -10,6 +10,7 @@ public class SuperPlayer : MonoBehaviour
     public GameObject GO_PlayerSprite;
     public CactimanParameters CactiParameters;
     public CactimanParameters.PlayerState State;
+    public GameObject DialogBox;
 
     public GameObject BombPrefab;
     public GameObject StarPrefab;
@@ -25,6 +26,7 @@ public class SuperPlayer : MonoBehaviour
     private bool Jumping;
     private float timeJump;
     private float timeOnStar;
+    private DialogManager dm;
 
     private enum holdObjectType
     {
@@ -37,6 +39,7 @@ public class SuperPlayer : MonoBehaviour
         jumpIn = CactiParameters.JumpFrequency;
         Jumping = false;
         timeJump = 0;
+        dm = FindObjectOfType<DialogManager>();
     }
 	
 	// Update is called once per frame
@@ -72,6 +75,11 @@ public class SuperPlayer : MonoBehaviour
             heldObject = null;
             holdType = holdObjectType.Nothing;
         }
+        else if (State == CactimanParameters.PlayerState.InDialog)
+        {
+            getDialogInput();
+            checkSpikes();
+        }
         else
         {
             GetInput();
@@ -89,6 +97,18 @@ public class SuperPlayer : MonoBehaviour
         }
     }
 
+    private void getDialogInput()
+    {
+        //Input is taken in the dialog manager gameobject
+        normalizedHorizontal = 0;
+        player.SetHorizontalVeloicty(0);
+        GO_PlayerSprite.GetComponent<Animator>().Play("Idle");
+        if (!dm.InDialog)
+        {
+            State = CactimanParameters.PlayerState.FullControll;
+        }
+    }
+
     private void GetInput()
     {
         if (player._ControllerState.IsGrounded)
@@ -102,217 +122,247 @@ public class SuperPlayer : MonoBehaviour
         bool hasjumped = false;
         jumpIn -= Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.Space) && canJump())
+        if (player._ControllerState.IsGrounded && heldObject == null)
         {
-            //player.SetVerticalVelocity(CactiParameters.JumpMagnitude);
-            player.Parameters.StarSnap = false;
-            //player.addVerticalVelocity(CactiParameters.JumpMagnitude);
-            jumpIn = CactiParameters.JumpFrequency;
-            player.Parameters.IgnorePlatforms = true;
-            hasjumped = true;
-            Jumping = true;
-            timeJump = 0;
-        }
-
-        if (Jumping)
-        {
-            timeJump += Time.deltaTime;
-            if (player._ControllerState.IsCollidingUp)
+            if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                timeJump += .21f;
-            }
-            if (Input.GetKey(KeyCode.Space) && timeJump <= .2)
-            {
-                player.SetVerticalVelocity(Mathf.Lerp(280, 330, timeJump * 5));
-            }
-            else
-            {
-                player.Parameters.StarSnap = true;
-                player.Parameters.IgnorePlatforms = false;
-            }
-        }
-
-        normalizedHorizontal = 0;
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            normalizedHorizontal += -1;
-            //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
-            if (State == CactimanParameters.PlayerState.FullControll)
-                player._ControllerState.IsFacingRight = false;
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            normalizedHorizontal += 1;
-            //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
-            if (State == CactimanParameters.PlayerState.FullControll)
-                player._ControllerState.IsFacingRight = true;
-        }
-
-        if (timeOnStar != 0 && timeOnStar <= .1f)
-        {
-            normalizedHorizontal = 0;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            if (canDash())
-            {
-                State = CactimanParameters.PlayerState.Dashing;
-                //Do Dashing things
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            EditorApplication.isPaused = true;
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            Vector3 pos = new Vector3(Input.mousePosition.x - 320, Input.mousePosition.y - 180, -20f);
-            Instantiate(BombPrefab, pos, Quaternion.identity);
-        }
-
-        if (Input.GetKeyDown(KeyCode.S) && holdType == holdObjectType.Nothing)
-        {
-            holdType = holdObjectType.Star;
-            Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
-            heldObject = Instantiate(StarPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
-        }
-        if (Input.GetKeyDown(KeyCode.D) && holdType == holdObjectType.Nothing)
-        {
-            holdType = holdObjectType.Bomb;
-            Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
-            heldObject = Instantiate(BombPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
-        }
-
-        if (hasjumped)
-        {
-            GO_PlayerSprite.GetComponent<Animator>().Play("Jump");
-        }
-        else if (normalizedHorizontal != 0 && State == CactimanParameters.PlayerState.FullControll && player._ControllerState.IsGrounded && jumpIn != CactiParameters.JumpFrequency && jumpIn <= CactiParameters.JumpFrequency - .2f)
-        {
-            GO_PlayerSprite.GetComponent<Animator>().Play("Run");
-        }
-        else if (jumpIn != CactiParameters.JumpFrequency && player._ControllerState.IsGrounded && jumpIn <= CactiParameters.JumpFrequency - .2f)
-        {
-            GO_PlayerSprite.GetComponent<Animator>().Play("Idle");
-        }
-
-        if (player._ControllerState.IsFacingRight)
-        {
-            GO_PlayerSprite.GetComponent<SpriteRenderer>().flipX = false;
-            GO_PlayerSprite.transform.position = transform.position;
-        }
-        else
-        {
-            GO_PlayerSprite.GetComponent<SpriteRenderer>().flipX = true;
-            GO_PlayerSprite.transform.position = transform.position + new Vector3(24, 0, 0);
-        }
-
-        player.SetHorizontalVeloicty(normalizedHorizontal * 150);
-        if (holdType != holdObjectType.Nothing && heldObject != null)
-        {
-            bool buttonReleased = false;
-            switch (holdType)
-            {
-                case holdObjectType.Nothing:
-                    //This never happens
-                    break;
-
-                case holdObjectType.Bomb:
-
-                    heldObject.transform.position = new Vector3(transform.position.x - 20, transform.position.y - 2, transform.position.z + 1);
-                    if (Input.GetKey(KeyCode.D))
-                    {
-                        
-                    }
-                    else
-                    {
-                        buttonReleased = true;
-                    }
-                    break;
-
-                case holdObjectType.Star:
-
-                    heldObject.transform.parent.position = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1);
-                    if (Input.GetKey(KeyCode.S))
-                    {
-
-                    }
-                    else
-                    {
-                        buttonReleased = true;
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-
-            if (heldObject.GetComponent<Throwable>().DoneSpawning && buttonReleased)
-            {
-                //Throwing
-                Vector2 throwVelocity = new Vector2();
-
-                if (player._ControllerState.IsFacingRight)
+                RaycastHit2D[] hits = Physics2D.BoxCastAll((Vector2)transform.position + player._Collider.offset, player._Collider.size, 0, Vector2.zero, Mathf.Infinity);
+                if (hits.Length > 0)
                 {
-                    if (Input.GetKey(KeyCode.UpArrow))
+                    bool enterDialog = false;
+                    foreach (var item in hits)
                     {
-                        throwVelocity = new Vector2(150, 400);
+                        if (item.transform.gameObject.GetComponent<DialogTrigger>())
+                        {
+                            enterDialog = true;
+                            State = CactimanParameters.PlayerState.InDialog;
+                            DialogBox.transform.parent.transform.position = new Vector2(item.transform.position.x + 65, item.transform.position.y - 380);
+                            DialogBox.GetComponent<Animator>().Play("DialogBoxAnim");
+                            item.transform.gameObject.GetComponent<DialogTrigger>().TriggerDialogue();
+                            break;
+                        }
                     }
-                    else if (Input.GetKey(KeyCode.DownArrow))
+                    if (enterDialog)
                     {
-                        throwVelocity = new Vector2(150, -400);
+                        return;
                     }
-                    else
-                    {
-                        throwVelocity = new Vector2(250, 200);
-                    }
+                }
+            }
+        }
+            
+
+            if (Input.GetKeyDown(KeyCode.Space) && canJump())
+            {
+                //player.SetVerticalVelocity(CactiParameters.JumpMagnitude);
+                player.Parameters.StarSnap = false;
+                //player.addVerticalVelocity(CactiParameters.JumpMagnitude);
+                jumpIn = CactiParameters.JumpFrequency;
+                player.Parameters.IgnorePlatforms = true;
+                hasjumped = true;
+                Jumping = true;
+                timeJump = 0;
+            }
+
+            if (Jumping)
+            {
+                timeJump += Time.deltaTime;
+                if (player._ControllerState.IsCollidingUp)
+                {
+                    timeJump += .21f;
+                }
+                if (Input.GetKey(KeyCode.Space) && timeJump <= .2)
+                {
+                    player.SetVerticalVelocity(Mathf.Lerp(280, 330, timeJump * 5));
                 }
                 else
                 {
-                    if (Input.GetKey(KeyCode.UpArrow))
-                    {
-                        throwVelocity = new Vector2(-150, 400);
-                    }
-                    else if (Input.GetKey(KeyCode.DownArrow))
-                    {
-                        throwVelocity = new Vector2(-150, -400);
-                    }
-                    else
-                    {
-                        throwVelocity = new Vector2(-250, 200);
-                    }
+                    player.Parameters.StarSnap = true;
+                    player.Parameters.IgnorePlatforms = false;
                 }
-
-                heldObject.GetComponentInChildren<Throwable>().Throw(throwVelocity);
-                holdType = holdObjectType.Nothing;
-                heldObject = null;
             }
-            else if (buttonReleased)
+
+            normalizedHorizontal = 0;
+            if (Input.GetKey(KeyCode.LeftArrow))
             {
-                //LetGoTooEarly
+                normalizedHorizontal += -1;
+                //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
+                if (State == CactimanParameters.PlayerState.FullControll)
+                    player._ControllerState.IsFacingRight = false;
+            }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                normalizedHorizontal += 1;
+                //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
+                if (State == CactimanParameters.PlayerState.FullControll)
+                    player._ControllerState.IsFacingRight = true;
+            }
+
+            if (timeOnStar != 0 && timeOnStar <= .1f)
+            {
+                normalizedHorizontal = 0;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                if (canDash())
+                {
+                    State = CactimanParameters.PlayerState.Dashing;
+                    //Do Dashing things
+                }
+            }
+            /*
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                EditorApplication.isPaused = true;
+            }
+            */
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                Vector3 pos = new Vector3(Input.mousePosition.x - 320, Input.mousePosition.y - 180, -20f);
+                Instantiate(BombPrefab, pos, Quaternion.identity);
+            }
+
+            if (Input.GetKeyDown(KeyCode.S) && holdType == holdObjectType.Nothing)
+            {
+                holdType = holdObjectType.Star;
+                Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
+                heldObject = Instantiate(StarPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
+            }
+            if (Input.GetKeyDown(KeyCode.D) && holdType == holdObjectType.Nothing)
+            {
+                holdType = holdObjectType.Bomb;
+                Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
+                heldObject = Instantiate(BombPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
+            }
+
+            if (hasjumped)
+            {
+                GO_PlayerSprite.GetComponent<Animator>().Play("Jump");
+            }
+            else if (normalizedHorizontal != 0 && State == CactimanParameters.PlayerState.FullControll && player._ControllerState.IsGrounded && jumpIn != CactiParameters.JumpFrequency && jumpIn <= CactiParameters.JumpFrequency - .2f)
+            {
+                GO_PlayerSprite.GetComponent<Animator>().Play("Run");
+            }
+            else if (jumpIn != CactiParameters.JumpFrequency && player._ControllerState.IsGrounded && jumpIn <= CactiParameters.JumpFrequency - .2f)
+            {
+                GO_PlayerSprite.GetComponent<Animator>().Play("Idle");
+            }
+
+            if (player._ControllerState.IsFacingRight)
+            {
+                GO_PlayerSprite.GetComponent<SpriteRenderer>().flipX = false;
+                GO_PlayerSprite.transform.position = transform.position;
+            }
+            else
+            {
+                GO_PlayerSprite.GetComponent<SpriteRenderer>().flipX = true;
+                GO_PlayerSprite.transform.position = transform.position + new Vector3(24, 0, 0);
+            }
+
+            player.SetHorizontalVeloicty(normalizedHorizontal * 150);
+            if (holdType != holdObjectType.Nothing && heldObject != null)
+            {
+                bool buttonReleased = false;
                 switch (holdType)
                 {
                     case holdObjectType.Nothing:
+                        //This never happens
                         break;
+
                     case holdObjectType.Bomb:
-                        heldObject.GetComponent<Bomb>().removeBomb();
+
+                        heldObject.transform.position = new Vector3(transform.position.x - 20, transform.position.y - 2, transform.position.z + 1);
+                        if (Input.GetKey(KeyCode.D))
+                        {
+
+                        }
+                        else
+                        {
+                            buttonReleased = true;
+                        }
                         break;
+
                     case holdObjectType.Star:
-                        heldObject.GetComponent<SuperActor>().Remove();
+
+                        heldObject.transform.parent.position = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1);
+                        if (Input.GetKey(KeyCode.S))
+                        {
+
+                        }
+                        else
+                        {
+                            buttonReleased = true;
+                        }
                         break;
+
                     default:
                         break;
                 }
-                heldObject = null;
+
+                if (heldObject.GetComponent<Throwable>().DoneSpawning && buttonReleased)
+                {
+                    //Throwing
+                    Vector2 throwVelocity = new Vector2();
+
+                    if (player._ControllerState.IsFacingRight)
+                    {
+                        if (Input.GetKey(KeyCode.UpArrow))
+                        {
+                            throwVelocity = new Vector2(150, 400);
+                        }
+                        else if (Input.GetKey(KeyCode.DownArrow))
+                        {
+                            throwVelocity = new Vector2(150, -400);
+                        }
+                        else
+                        {
+                            throwVelocity = new Vector2(250, 200);
+                        }
+                    }
+                    else
+                    {
+                        if (Input.GetKey(KeyCode.UpArrow))
+                        {
+                            throwVelocity = new Vector2(-150, 400);
+                        }
+                        else if (Input.GetKey(KeyCode.DownArrow))
+                        {
+                            throwVelocity = new Vector2(-150, -400);
+                        }
+                        else
+                        {
+                            throwVelocity = new Vector2(-250, 200);
+                        }
+                    }
+
+                    heldObject.GetComponentInChildren<Throwable>().Throw(throwVelocity);
+                    holdType = holdObjectType.Nothing;
+                    heldObject = null;
+                }
+                else if (buttonReleased)
+                {
+                    //LetGoTooEarly
+                    switch (holdType)
+                    {
+                        case holdObjectType.Nothing:
+                            break;
+                        case holdObjectType.Bomb:
+                            heldObject.GetComponent<Bomb>().removeBomb();
+                            break;
+                        case holdObjectType.Star:
+                            heldObject.GetComponent<SuperActor>().Remove();
+                            break;
+                        default:
+                            break;
+                    }
+                    heldObject = null;
+                    holdType = holdObjectType.Nothing;
+                }
+            }
+            else if (heldObject == null)
+            {
                 holdType = holdObjectType.Nothing;
             }
-        }
-        else if (heldObject == null)
-        {
-            holdType = holdObjectType.Nothing;
-        }
     }
 
     public void Dash(int normalizedHorizontal)
@@ -351,8 +401,6 @@ public class SuperPlayer : MonoBehaviour
         {
             case CactimanParameters.PlayerState.FullControll:
                 break;
-            case CactimanParameters.PlayerState.KnockedBack:
-                return false;
             case CactimanParameters.PlayerState.Dashing:
                 break;
             case CactimanParameters.PlayerState.Crashing:
@@ -386,8 +434,6 @@ public class SuperPlayer : MonoBehaviour
         {
             case CactimanParameters.PlayerState.FullControll:
                 break;
-            case CactimanParameters.PlayerState.KnockedBack:
-                return false;
             case CactimanParameters.PlayerState.Dashing:
                 return false;
             case CactimanParameters.PlayerState.Crashing:

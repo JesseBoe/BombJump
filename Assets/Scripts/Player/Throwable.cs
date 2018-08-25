@@ -21,7 +21,7 @@ public class Throwable : MonoBehaviour {
 	void Update ()
     {
         timePassed += Time.deltaTime;
-        if (timePassed > .45)
+        if (timePassed > .49)
         {
             DoneSpawning = true;
         }

@@ -8,9 +8,9 @@ public class CactimanParameters
     public enum PlayerState
     {
         FullControll,
-        KnockedBack,
         Dashing,
         Crashing,
+        InDialog,
         Dead
     }
 

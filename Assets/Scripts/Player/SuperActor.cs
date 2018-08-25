@@ -65,6 +65,14 @@ public class SuperActor : MonoBehaviour {
             }
 
             addVerticalVelocity(Parameters.Gravity);
+            if (Mathf.Abs(Velocity.x) > Parameters.MaxVelocity.x)
+            {
+                Velocity.x = Mathf.Clamp(Velocity.x, -Parameters.MaxVelocity.x, Parameters.MaxVelocity.x);
+            }
+            if (Mathf.Abs(Velocity.y) > Parameters.MaxVelocity.y)
+            {
+                Velocity.y = Mathf.Clamp(Velocity.y, -Parameters.MaxVelocity.y, Parameters.MaxVelocity.y);
+            }
             handleKnockBack();
             handleMovement(knockBackVelocity);
             handleMovement(Velocity * Time.deltaTime);
@@ -452,7 +460,7 @@ public class SuperActor : MonoBehaviour {
                     if (!ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
                     {
                         ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
-                        addVerticalVelocity(-500f);
+                        addVerticalVelocity(-800f);
                         stillOnStar = true;
                     }
                     break;
@@ -487,7 +495,7 @@ public class SuperActor : MonoBehaviour {
                     if (!ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
                     {
                         ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
-                        addVerticalVelocity(-500f);
+                        addVerticalVelocity(-800f);
                         stillOnPlat = true;
                     }
                     break;
