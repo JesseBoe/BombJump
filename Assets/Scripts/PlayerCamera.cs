@@ -20,6 +20,7 @@ public class PlayerCamera : MonoBehaviour {
     private Vector3 pos;
     private bool locked = false;
     private bool first = true;
+    private bool forceFullscreen = false;
 
     public CameraType CameraMoveType;
 
@@ -32,11 +33,12 @@ public class PlayerCamera : MonoBehaviour {
         }
         if (Screen.fullScreen)
         {
-            Screen.SetResolution((int)baseRes.x, (int)baseRes.y, FullScreenMode.ExclusiveFullScreen, 120);
+            forceFullscreen = true;
+            Screen.SetResolution((int)baseRes.x, (int)baseRes.y, FullScreenMode.ExclusiveFullScreen, 150);
         }
         else
         {
-            Screen.SetResolution((int)baseRes.x, (int)baseRes.y, FullScreenMode.Windowed, 120);
+            Screen.SetResolution((int)baseRes.x, (int)baseRes.y, FullScreenMode.Windowed, 150);
         }
         setScale(ActorManager.instance.scale);
         transform.position = new Vector2(Camerahorizontal, Cameraheight);
@@ -53,6 +55,14 @@ public class PlayerCamera : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if (forceFullscreen)
+        {
+            Screen.fullScreen = true;
+            if (Screen.fullScreen)
+            {
+                forceFullscreen = false;
+            }
+        }
         if (player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<SuperActor>();
@@ -89,14 +99,14 @@ public class PlayerCamera : MonoBehaviour {
             }
             Vector2 newRes = baseRes * scale;
             ActorManager.instance.scale = scale;
-            Screen.SetResolution((int)newRes.x, (int)newRes.y, FullScreenMode.Windowed, 120);
+            Screen.SetResolution((int)newRes.x, (int)newRes.y, FullScreenMode.Windowed, 250);
         }
         if (Input.GetKeyDown(KeyCode.RightBracket))
         {
             scale++;
             Vector2 newRes = baseRes * scale;
             ActorManager.instance.scale = scale;
-            Screen.SetResolution((int)newRes.x, (int)newRes.y, FullScreenMode.Windowed, 120);
+            Screen.SetResolution((int)newRes.x, (int)newRes.y, FullScreenMode.Windowed, 250);
         }
         first = false;
     }
@@ -105,7 +115,7 @@ public class PlayerCamera : MonoBehaviour {
     {
         scale = s;
         Vector2 newRes = baseRes * scale;
-        Screen.SetResolution((int)newRes.x, (int)newRes.y, FullScreenMode.Windowed, 120);
+        Screen.SetResolution((int)newRes.x, (int)newRes.y, FullScreenMode.Windowed, 250);
     }
 
     public void setCameraTwo(CameraControlPoint cam, Vector2 newPosition)

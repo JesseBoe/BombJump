@@ -51,9 +51,18 @@ public class SuperPlayer : MonoBehaviour
         dm = FindObjectOfType<DialogManager>();
         DialogBox = GameObject.FindGameObjectWithTag("panel");
     }
-	
-	// Update is called once per frame
-	void Update()
+
+    private void FixedUpdate()
+    {
+        if (Jumping)
+        {
+            timeJump += Time.deltaTime;
+            player.SetVerticalVelocity((Mathf.Lerp(250, 350, timeJump * 5)) * Time.deltaTime * 47f);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
     {
         if (player._ControllerState.IsCollidingUp && !collideUpPlaying)
         {
@@ -195,20 +204,29 @@ public class SuperPlayer : MonoBehaviour
 
         if (Jumping)
         {
-            timeJump += Time.deltaTime;
             if (player._ControllerState.IsCollidingUp)
             {
-                timeJump += .21f;
+                player.Parameters.StarSnap = true;
+                player.Parameters.IgnorePlatforms = false;
+                Jumping = false;
             }
-            if (Input.GetKey(KeyCode.Space) && timeJump <= .2)
+            if (Input.GetKey(KeyCode.Space))
             {
-                player.SetVerticalVelocity(Mathf.Lerp(280, 330, timeJump * 5));
+                
             }
-            else if (timeJump <= .2)
+            else
             {
-                timeJump += .21f;
+                player.Parameters.StarSnap = true;
+                player.Parameters.IgnorePlatforms = false;
+                Jumping = false;
             }
-            else if (player._ControllerState.IsCollidingDown)
+            if (player._ControllerState.IsCollidingDown && timeJump > .01f)
+            {
+                player.Parameters.StarSnap = true;
+                player.Parameters.IgnorePlatforms = false;
+                Jumping = false;
+            }
+            if (timeJump > .21f)
             {
                 player.Parameters.StarSnap = true;
                 player.Parameters.IgnorePlatforms = false;

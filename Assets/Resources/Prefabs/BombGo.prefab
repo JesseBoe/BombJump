@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198348945121635428}
   - component: {fileID: 199840227284065910}
   - component: {fileID: 114341714462777604}
-  m_Layer: 13
+  m_Layer: 10
   m_Name: Particle revolver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 114931734773689242}
   - component: {fileID: 95781693020255448}
   - component: {fileID: 82141563344072890}
-  m_Layer: 13
+  m_Layer: 10
   m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4258566553499520}
   - component: {fileID: 212936585889768632}
-  m_Layer: 13
+  m_Layer: 10
   m_Name: Explosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +91,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4176055261934266}
   - component: {fileID: 212249466534408364}
-  m_Layer: 13
+  m_Layer: 10
   m_Name: Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 4101015957615448}
   - component: {fileID: 199200427679348914}
   - component: {fileID: 198703931545051780}
-  m_Layer: 13
+  m_Layer: 10
   m_Name: Particle revolver 001 Megido
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -402,7 +402,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 546304
     Pushable: 1
-    pushPriority: 0
+    pushPriority: 5
     Bouncy: 0
     IgnorePlatforms: 0
     FreezeY: 0

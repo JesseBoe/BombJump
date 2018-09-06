@@ -45,6 +45,14 @@ public class Bomb : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (gameObject.layer == LayerMask.NameToLayer("Intangible"))
+        {
+            _actor.DefaultParamters.Pushable = false;
+        }
+        else
+        {
+            _actor.DefaultParamters.Pushable = true;
+        }
         if (_actor._ControllerState.IsGrounded && !wasGrounded)
         {
             ActorManager.instance.PlaySound("Land", 1f);
@@ -212,7 +220,7 @@ public class Bomb : MonoBehaviour {
                     }
                 }
             }
-            gameObject.layer = LayerMask.NameToLayer("Bomb");
+            //gameObject.layer = LayerMask.NameToLayer("Bomb");
         }
         _actor.Parameters.layerMask = LayerMask.GetMask(checkCollides.ToArray());
         if (_actor.Parameters.layerMask == defaultmask)

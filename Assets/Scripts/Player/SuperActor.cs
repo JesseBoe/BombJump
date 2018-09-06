@@ -69,8 +69,11 @@ public class SuperActor : MonoBehaviour {
             _ControllerState.hasCollisionsWith.Clear();
             if (Parameters.StarSnap)
             {
-                starRide();
-                platRide();
+                if (knockBackVelocity == Vector2.zero)
+                {
+                    starRide();
+                    platRide();
+                }
             }
 
             addVerticalVelocity(Parameters.Gravity);
@@ -374,7 +377,7 @@ public class SuperActor : MonoBehaviour {
             {
                 if (item.Movable && !item.Go.GetComponent<SuperActor>()._ControllerState.DisablePush)
                 {
-                    if (item.Go.GetComponent<SuperActor>()._ControllerState.timePushed > 50)
+                    if (item.Go.GetComponent<SuperActor>()._ControllerState.timePushed > 20)
                     {
                         Debug.Log("YOOOO");
                         item.Go.GetComponent<SuperActor>().Active = false;
