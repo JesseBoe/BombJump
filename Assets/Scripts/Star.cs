@@ -16,6 +16,8 @@ public class Star : MonoBehaviour {
     private List<string> checkCollides = new List<string>();
     private List<int> keepChecking = new List<int>();
     private Throwable throwable;
+    private AudioSource source;
+    private bool wasGrounded = false;
 
 
     private enum starState
@@ -40,11 +42,18 @@ public class Star : MonoBehaviour {
         Player = GameObject.FindGameObjectWithTag("Player");
         throwable = GetComponent<Throwable>();
         timePassed = 0;
+        source = GetComponent<AudioSource>();
+        source.Play();
 	}
 
     void Update()
     {
+        if (_actor._ControllerState.IsGrounded && !wasGrounded)
+        {
+            ActorManager.instance.PlaySound("LandingFinal", 1f);
+        }
         timePassed += Time.deltaTime;
+        wasGrounded = _actor._ControllerState.IsGrounded;
     }
 
     // Update is called once per frame
@@ -89,7 +98,14 @@ public class Star : MonoBehaviour {
                 if (item.layer == LayerMask.NameToLayer("Starblock"))
                 {
                     item.GetComponent<StarBlock>().hit();
+                    ActorManager.instance.PlaySound("TargetHit", 1f);
                     Instantiate(starBlastPrefab, transform.position + new Vector3(16, 16, -1f), Quaternion.identity);
+                    removeStar();
+                }
+                if (item.layer == LayerMask.NameToLayer("Corruption"))
+                {
+                    Instantiate(starBlastPrefab, transform.position + new Vector3(16, 16, -1f), Quaternion.identity);
+                    ActorManager.instance.PlaySound("Corruption", 1f);
                     removeStar();
                 }
             }
@@ -168,7 +184,7 @@ public class Star : MonoBehaviour {
     IEnumerator destroyTimer()
     {
         float destroytime = 0;
-        while (destroytime < 1)
+        while (destroytime < .6f)
         {
             destroytime += Time.deltaTime;
             yield return new WaitForEndOfFrame();

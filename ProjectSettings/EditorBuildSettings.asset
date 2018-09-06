@@ -7,5 +7,8 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/TrainingGrounds.unity
-    guid: 1bf6c606d999bb34b9d4550f29e39fb5
+    guid: fcd4ef058e67b564b90fdc5a5f243d62
+  - enabled: 1
+    path: Assets/anenegry.unity
+    guid: 6f66dae73906d4641b7a191ac66f1a0d
   m_configObjects: {}

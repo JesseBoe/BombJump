@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraControlPoint : MonoBehaviour {
 
-    public PlayerCamera camera;
+    public PlayerCamera cam;
     private bool activated = false;
 
     public float Floor;
@@ -19,18 +19,30 @@ public class CameraControlPoint : MonoBehaviour {
     public bool OnRails;
 
     // Use this for initialization
-    void Start () {
-		
+    void Start ()
+    {
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
         if (!activated)
         {
-            if (Vector2.Distance(camera.transform.position, transform.position) < 140f)
+            if (cam.CameraMoveType == PlayerCamera.CameraType.HorizontalRail)
             {
-                activated = true;
-                camera.setCamera(LeftWall, RightWall, Floor, Roof, camerahorizontal, cameraheight, Offset, type);
+                if (Vector2.Distance(cam.transform.position, transform.position) < 320f)
+                {
+                    activated = true;
+                    cam.setCamera(LeftWall, RightWall, Floor, Roof, camerahorizontal, cameraheight, Offset, type);
+                }
+            }
+            if (cam.CameraMoveType == PlayerCamera.CameraType.VerticalRail)
+            {
+                if (Vector2.Distance(cam.transform.position, transform.position) < 180f)
+                {
+                    activated = true;
+                    cam.setCamera(LeftWall, RightWall, Floor, Roof, camerahorizontal, cameraheight, Offset, type);
+                }
             }
         }
 	}

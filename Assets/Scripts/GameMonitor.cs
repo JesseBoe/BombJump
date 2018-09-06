@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GameMonitor : MonoBehaviour
 {
+    public CheckPoint checkPoint;
+
     private BoxCollider2D myCollider;
     private bool activated = false;
     // Use this for initialization
@@ -24,7 +26,20 @@ public class GameMonitor : MonoBehaviour
             if (hits.Length > 0)
             {
                 activated = true;
+                ActorManager.instance.PlaySound("MonitorActivate", 1f);
                 GetComponent<Animator>().Play("MonitorActivate");
+                if (ActorManager.instance.checkPoint.checkPointNumber < checkPoint.checkPointNumber)
+                {
+                    ActorManager.instance.checkPoint = checkPoint;
+                    if (checkPoint.checkPointNumber == 5)
+                    {
+                        ActorManager.instance.PlayLoopingSound("breakthetarget");
+                    }
+                    else if (ActorManager.instance.GetComponent<AudioSource>().clip.name != "LevelMusic")
+                    {
+                        ActorManager.instance.PlayLoopingSound("LevelMusic");
+                    }
+                }
             }
         }
     }

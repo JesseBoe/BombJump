@@ -10,6 +10,7 @@ public class Bomb : MonoBehaviour {
     private SpriteRenderer _spriteRenderer;
     private SpriteRenderer _explosionSpriteRenderer;
     private Throwable throwable;
+    private bool wasGrounded = false;
 
     public float time;
     private float aniSpeed;
@@ -44,7 +45,12 @@ public class Bomb : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (_actor._ControllerState.IsGrounded && !wasGrounded)
+        {
+            ActorManager.instance.PlaySound("Land", 1f);
+        }
         checkSpikes();
+        wasGrounded = _actor._ControllerState.IsGrounded;
     }
 
     private void FixedUpdate()
@@ -110,6 +116,7 @@ public class Bomb : MonoBehaviour {
         {
             if (!exploded)
             {
+                ActorManager.instance.PlaySound("BombExplosionFinal", 1);
                 _actor.Active = false;
                 _spriteRenderer.sprite = null;
                 _actor.Parameters.layerMask = LayerMask.NameToLayer("Intangible");
@@ -124,6 +131,8 @@ public class Bomb : MonoBehaviour {
                         if (rayCastHit.transform.gameObject == gameObject)
                             continue;
 
+
+                        ActorManager.instance.PlaySound("Hit_Hurt", 1f);
                         Vector2 rayhitCenter = new Vector2(rayCastHit.transform.position.x + rayCastHit.transform.GetComponent<BoxCollider2D>().offset.x, rayCastHit.transform.position.y + rayCastHit.transform.GetComponent<BoxCollider2D>().offset.y);
                         float distance = Mathf.Sqrt((rayhitCenter.x - center.x) * (rayhitCenter.x - center.x) + (rayhitCenter.y - center.y) * (rayhitCenter.y - center.y));
                         var degree = Mathf.Atan2(rayhitCenter.y - center.y, rayhitCenter.x - center.x) * 180 / Mathf.PI;
@@ -137,16 +146,6 @@ public class Bomb : MonoBehaviour {
                         {
                             dir.y = .9f;
                         }
-                        float horizontalSkew = 0;
-                        if (rayCastHit.transform.position.x + rayCastHit.transform.GetComponent<BoxCollider2D>().offset.x /2 < center.x)
-                        {
-                            //horizontalSkew -= .35f;
-                        }
-                        else if (rayCastHit.transform.position.x + rayCastHit.transform.GetComponent<BoxCollider2D>().offset.x /2 > center.x)
-                        {
-                            //horizontalSkew += .35f;
-                        }
-                        dir.x += horizontalSkew;
                         Mathf.Clamp(dir.x, -1f, 1f);
                         float magnitude = (_parameters.EffectiveRange - distance) / _parameters.EffectiveRange;
                         //Debug.Log(magnitude);

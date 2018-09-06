@@ -31,26 +31,35 @@ public class SuperActor : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
+        _Collider = GetComponent<BoxCollider2D>();
         _ControllerState = new ControllerState2D();
         _ControllerState.IsFacingRight = true;
         _transform = gameObject.transform;
         Velocity = Vector2.zero;
-        _Collider = gameObject.GetComponent<BoxCollider2D>();
 
         _horizontalDistanceBetweenArrays = (_Collider.size.x - skinWidth * 2) / (verticalRays - 1);
         _verticalDistanceBetweenArrays = (_Collider.size.y - skinWidth * 2) / (horizontalRays - 1);
         calculateRayOrigins();
-        GameObject.FindGameObjectWithTag("Manager").GetComponent<ActorManager>().Actors.Add(this);
+        //GameObject.FindGameObjectWithTag("Manager").GetComponent<ActorManager>().Actors.Add(this);
+        ActorManager.instance.Actors.Add(this);
     }
 
     // Update is called once per frame
     void Update () {
-		
-	}
+
+    }
 
     private void FixedUpdate()
     {
 
+    }
+    
+    public void setPos(Vector3 newPos)
+    {
+        _transform.position = newPos;
+        transform.position = _transform.position;
+        Velocity = Vector2.zero;
+        calculateRayOrigins();
     }
 
     public void Act()
@@ -103,7 +112,8 @@ public class SuperActor : MonoBehaviour {
 
     public void Remove()
     {
-        GameObject.FindGameObjectWithTag("Manager").GetComponent<ActorManager>().Actors.Remove(this);
+        //GameObject.FindGameObjectWithTag("Manager").GetComponent<ActorManager>().Actors.Remove(this);
+        ActorManager.instance.Actors.Remove(this);
         GameObject.Destroy(gameObject);
     }
 

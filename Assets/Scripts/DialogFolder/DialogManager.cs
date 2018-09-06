@@ -105,6 +105,7 @@ public class DialogManager : MonoBehaviour {
         foreach (char letter in sentence.ToCharArray())
         {
             dialogText.text += letter;
+            ActorManager.instance.PlaySound("TextSpit", .6f);
             yield return new WaitForSeconds(.04f * speedMultiplier);
         }
         doneTypeing = true;
