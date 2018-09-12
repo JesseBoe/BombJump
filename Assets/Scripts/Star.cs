@@ -165,8 +165,12 @@ public class Star : MonoBehaviour {
         GameObject.Destroy(transform.parent.gameObject);
     }
 
-    void OnBecameInvisible()
+    private void OnBecameInvisible()
     {
+        if (ActorManager.instance.resettingScene)
+        {
+            return;
+        }
         if (throwable.Thrown)
         {
             if (isActiveAndEnabled)
@@ -178,7 +182,10 @@ public class Star : MonoBehaviour {
 
     private void OnBecameVisible()
     {
-        StopCoroutine("destroyTimer");
+        if (this)
+        {
+            StopCoroutine("destroyTimer");
+        }
     }
 
     IEnumerator destroyTimer()
@@ -186,6 +193,10 @@ public class Star : MonoBehaviour {
         float destroytime = 0;
         while (destroytime < .6f)
         {
+            if (!this)
+            {
+                yield break;
+            }
             destroytime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }

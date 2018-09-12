@@ -14,6 +14,7 @@ public class ActorParameters
     public bool FreezeY = false;
     public bool FreezeX = false;
     public bool StarSnap = false;
+    public bool isDeadly = false;
 
     public Vector2 MaxVelocity = new Vector2(float.MaxValue, float.MaxValue);
 

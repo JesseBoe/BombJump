@@ -39,6 +39,7 @@ public class SuperPlayer : MonoBehaviour
 
 	// Use this for initialization
 	void Start () {
+        ActorManager.instance.resettingScene = false; //ZZZ
         if (firstFrame)
         {
             transform.position = ActorManager.instance.checkPoint.playerSpawnPosition;
@@ -58,6 +59,18 @@ public class SuperPlayer : MonoBehaviour
         {
             timeJump += Time.deltaTime;
             player.SetVerticalVelocity((Mathf.Lerp(250, 350, timeJump * 5)) * Time.deltaTime * 47f);
+        }
+    }
+
+    public void Die()
+    {
+        if (State != CactimanParameters.PlayerState.Dead)
+        {
+            State = CactimanParameters.PlayerState.Dead;
+            ActorManager.instance.PlaySound("Hit_Hurt", 1f);
+            ActorManager.instance.PlaySoundDeley("Hit_Hurt", .8f, .15f);
+            ActorManager.instance.PlaySoundDeley("PlayerDeath", .8f, .22f);
+            Instantiate(DeathPrefab, transform.position + new Vector3(16f, 16f, -1f), Quaternion.identity);
         }
     }
 
@@ -122,11 +135,14 @@ public class SuperPlayer : MonoBehaviour
         RaycastHit2D[] hits = Physics2D.BoxCastAll((Vector2)transform.position + player._Collider.offset, player._Collider.size, 0, Vector2.zero, Mathf.Infinity, LayerMask.GetMask("Spike", "Bullet"));
         if (hits.Length > 0)
         {
-            State = CactimanParameters.PlayerState.Dead;
-            ActorManager.instance.PlaySound("Hit_Hurt", 1f);
-            ActorManager.instance.PlaySoundDeley("Hit_Hurt", .8f, .15f);
-            ActorManager.instance.PlaySoundDeley("PlayerDeath", .8f, .22f);
-            Instantiate(DeathPrefab, transform.position + new Vector3(16f, 16f, -1f), Quaternion.identity);
+            if (State != CactimanParameters.PlayerState.Dead)
+            {
+                State = CactimanParameters.PlayerState.Dead;
+                ActorManager.instance.PlaySound("Hit_Hurt", 1f);
+                ActorManager.instance.PlaySoundDeley("Hit_Hurt", .8f, .15f);
+                ActorManager.instance.PlaySoundDeley("PlayerDeath", .8f, .22f);
+                Instantiate(DeathPrefab, transform.position + new Vector3(16f, 16f, -1f), Quaternion.identity);
+            }
         }
     }
 

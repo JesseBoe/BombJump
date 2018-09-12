@@ -17,6 +17,7 @@ public class ActorManager : MonoBehaviour
     public AudioSource sfx;
 
     public int scale = 1;
+    public bool resettingScene = false;
     public bool hasStar = false;
     public bool hasBomb = false;
 
@@ -61,6 +62,7 @@ public class ActorManager : MonoBehaviour
 	void Update () {
         if (Input.GetKeyDown(KeyCode.R))
         {
+            resettingScene = true;
             Actors.Clear();
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }

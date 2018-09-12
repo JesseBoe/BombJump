@@ -400,9 +400,9 @@ MonoBehaviour:
   DefaultParamters:
     layerMask:
       serializedVersion: 2
-      m_Bits: 546304
+      m_Bits: 545280
     Pushable: 1
-    pushPriority: 5
+    pushPriority: 0
     Bouncy: 0
     IgnorePlatforms: 0
     FreezeY: 0

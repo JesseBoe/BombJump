@@ -117,7 +117,10 @@ public class SuperActor : MonoBehaviour {
     {
         //GameObject.FindGameObjectWithTag("Manager").GetComponent<ActorManager>().Actors.Remove(this);
         ActorManager.instance.Actors.Remove(this);
-        GameObject.Destroy(gameObject);
+        if (this)
+        {
+            GameObject.Destroy(gameObject);
+        }
     }
 
     private void calculateRayOrigins()
