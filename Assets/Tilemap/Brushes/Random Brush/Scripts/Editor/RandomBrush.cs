@@ -28,7 +28,7 @@ namespace UnityEditor
 				foreach (Vector3Int location in bounds.allPositionsWithin)
 				{
 					var randomTile = randomTiles[(int) (randomTiles.Length * UnityEngine.Random.value)];
-		            tilemap.SetTile(location, randomTile);
+                    tilemap.SetTile(location, randomTile);
 				}
 			}
 			else

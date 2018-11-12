@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4383854752411216}
   - component: {fileID: 61175162716683628}
   - component: {fileID: 114508292993340940}
-  m_Layer: 19
+  m_Layer: 11
   m_Name: BulletLandbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,12 +83,13 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 0
     Pushable: 0
-    pushPriority: 0
+    pushPriority: 50
     Bouncy: 0
-    IgnorePlatforms: 0
+    IgnorePlatforms: 1
     FreezeY: 0
     FreezeX: 0
     StarSnap: 0
+    isDeadly: 0
     MaxVelocity: {x: 3.4028235e+38, y: 3.4028235e+38}
     SlopeLimit: 30
     Gravity: 0

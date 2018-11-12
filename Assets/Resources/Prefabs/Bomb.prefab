@@ -55,7 +55,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1785992177423722}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4286014702092152}
@@ -218,6 +218,7 @@ MonoBehaviour:
     FreezeY: 0
     FreezeX: 0
     StarSnap: 0
+    isDeadly: 0
     MaxVelocity: {x: 3.4028235e+38, y: 3.4028235e+38}
     SlopeLimit: 30
     Gravity: -20
@@ -240,7 +241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   time: 0
   exploded: 0
-  GoExplosion: {fileID: 1464089676986866}
+  particleEffect: {fileID: 0}
   _parameters:
     MaxKnockBack: {x: 30, y: 950}
     MinKnockBack: {x: 16, y: 500}
@@ -296,7 +297,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 3e4121371b1894448af9502f6f0941a4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

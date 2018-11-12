@@ -16,6 +16,17 @@ TextureImporter:
     21300022: extraGameAssets_11
     21300024: extraGameAssets_12
     21300026: extraGameAssets_13
+    21300028: Sign
+    21300030: extraGameAssets_14
+    21300032: Spike
+    21300034: smallSpike
+    21300036: extraGameAssets_15
+    21300038: extraGameAssets_16
+    21300040: Spike5
+    21300042: Spike7
+    21300044: extraGameAssets_17
+    21300046: extraGameAssets_18
+    21300048: dot
   externalObjects: {}
   serializedVersion: 7
   mipmaps:
@@ -385,13 +396,281 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
       spriteID: 1b3d34d3835e4d44384ce89032e37060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sign
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 178
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e19bcfdb0bc2816439ba0fbca88325dc
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: extraGameAssets_14
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 180
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f44099d00da69184181f2b084ceec0ec
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spike
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 155
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -1, y: 7}
+        - {x: -7.2701073, y: -5}
+        - {x: -7, y: -8}
+        - {x: 7, y: -8}
+        - {x: 7.2363396, y: -5}
+        - {x: 1, y: 7}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21f17809c4189624eb9d6dfd93c92d87
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: smallSpike
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 133
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 4, y: 3}
+        - {x: 3, y: 3}
+        - {x: -0.8246765, y: -5}
+        - {x: 1, y: -8}
+        - {x: 6, y: -8}
+        - {x: 7.8246765, y: -5}
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae5f9732ff0a20747ac11b813ab141cc
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: extraGameAssets_15
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 108
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -6, y: -8}
+        - {x: -1, y: -8}
+        - {x: 0.8246765, y: -5}
+        - {x: -3, y: 3}
+        - {x: -4, y: 3}
+        - {x: -7.8246765, y: -5}
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9495d408877b3d4687de0d56a9d6e29
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: extraGameAssets_16
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 149
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -4, y: 3}
+        - {x: -7.7168884, y: -5}
+        - {x: -6, y: -8}
+        - {x: 6, y: -8}
+        - {x: 7.716873, y: -5}
+        - {x: 4, y: 3}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 97914c1b9fa03fb4781d7b4a97e9dfda
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spike5
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 84
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 4, y: 3}
+        - {x: 3, y: 3}
+        - {x: -0.6802826, y: -5}
+        - {x: 1, y: -8}
+        - {x: 6, y: -8}
+        - {x: 7.6802826, y: -5}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c340fd3e17a89346b206fe7619f903b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spike7
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 57
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -1, y: -8}
+        - {x: 0.76021194, y: -5}
+        - {x: -3, y: 3}
+        - {x: -4, y: 3}
+        - {x: -7.6802826, y: -5}
+        - {x: -6, y: -8}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86cfb2be1c6aeb64881e09b5b226cf0e
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: extraGameAssets_17
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 108
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -4, y: 3}
+        - {x: -7.6581573, y: -5}
+        - {x: -6, y: -8}
+        - {x: 6, y: -8}
+        - {x: 7.7151337, y: -5}
+        - {x: 4, y: 3}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54cddc39748204241a5036357d52e802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: extraGameAssets_18
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 131
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -4, y: 3}
+        - {x: -7.7151337, y: -5}
+        - {x: -6, y: -8}
+        - {x: 6, y: -8}
+        - {x: 7.601181, y: -5}
+        - {x: 4, y: 3}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96a452696ba3f5046a84336a4410d347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dot
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 151
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1add7d520d032834e97aca2117c06f4b
       vertices: []
       indices: 
       edges: []

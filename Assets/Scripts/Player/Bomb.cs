@@ -5,10 +5,8 @@ using UnityEngine;
 public class Bomb : MonoBehaviour {
     
     private Sprite[] bombSprites;
-    private Sprite[] explosionSprites;
     private SuperActor _actor;
     private SpriteRenderer _spriteRenderer;
-    private SpriteRenderer _explosionSpriteRenderer;
     private Throwable throwable;
     private bool wasGrounded = false;
 
@@ -20,7 +18,7 @@ public class Bomb : MonoBehaviour {
     private List<int> keepChecking = new List<int>();
     private LayerMask defaultmask;
 
-    public GameObject GoExplosion;
+    public GameObject particleEffect;
 
     public BombParameters _parameters; // set in unity editor
 
@@ -28,8 +26,6 @@ public class Bomb : MonoBehaviour {
     void Start ()
     {
 		bombSprites = Resources.LoadAll<Sprite>("Sprites/SunrealBomb");
-        explosionSprites = Resources.LoadAll<Sprite>("Sprites/Explosion");
-        _explosionSpriteRenderer = GoExplosion.GetComponent<SpriteRenderer>();
         _actor = GetComponent<SuperActor>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         throwable = GetComponent<Throwable>();
@@ -129,7 +125,8 @@ public class Bomb : MonoBehaviour {
                 _spriteRenderer.sprite = null;
                 _actor.Parameters.layerMask = LayerMask.NameToLayer("Intangible");
                 gameObject.layer = LayerMask.NameToLayer("Intangible");
-                GoExplosion.transform.SetParent(null);
+                particleEffect.transform.SetParent(null, true);
+                Object.Destroy(particleEffect, 5f);
                 Vector2 center = new Vector2(transform.position.x + _actor._Collider.offset.x, transform.position.y + _actor._Collider.offset.y );
                 var explosionHitList = Physics2D.CircleCastAll(center, _parameters.EffectiveRange, Vector2.zero, 0f, LayerMask.GetMask("Player", "Bomb"), -40f, 5f);
                 if (explosionHitList.Length > 0)
@@ -149,10 +146,14 @@ public class Bomb : MonoBehaviour {
                         {
                             dir.x = 0;
                         }
-                        dir.y += .65f;
+                        dir.y += .05f;
                         if (dir.y > .9)
                         {
                             dir.y = .9f;
+                        }
+                        if (dir.y < -.5f)
+                        {
+                            dir.y = -.5f;
                         }
                         Mathf.Clamp(dir.x, -1f, 1f);
                         float magnitude = (_parameters.EffectiveRange - distance) / _parameters.EffectiveRange;
@@ -169,16 +170,13 @@ public class Bomb : MonoBehaviour {
                         }
                     }
                 }
-
+                particleEffect.GetComponent<ParticleSystem>().Play();
                 exploded = true;
+
             }
             if (time >= _parameters.TimeToExplode + 1)
             {
                 removeBomb();
-            }
-            else
-            {
-                _explosionSpriteRenderer.sprite = explosionSprites[(int)Mathf.Floor(Mathf.Lerp(0, 10, time - _parameters.TimeToExplode))];
             }
         }
     }
@@ -232,7 +230,6 @@ public class Bomb : MonoBehaviour {
     public void removeBomb()
     {
         _actor.Remove();
-        GameObject.Destroy(GoExplosion);
         GameObject.Destroy(transform.parent.gameObject);
     }
 

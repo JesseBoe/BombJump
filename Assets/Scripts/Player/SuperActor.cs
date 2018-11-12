@@ -347,9 +347,12 @@ public class SuperActor : MonoBehaviour {
                 if (_ControllerState.standingOn == null)
                 {
                     _ControllerState.standingOn = item.Go;
-                    if (item.Go.GetComponent<SuperActor>() && !item.Go.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
+                    if (item.Go.GetComponent<SuperActor>())
                     {
-                        item.Go.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
+                        if (!item.Go.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
+                        {
+                            item.Go.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
+                        }
                     }
                 }
             }
@@ -458,7 +461,7 @@ public class SuperActor : MonoBehaviour {
         var rayDirection = Vector2.down;
         var rayOrigin = _cornerBottomLeft;
 
-        if (_ControllerState.standingOn != null && _ControllerState.standingOn.GetComponent<Star>())
+        if (_ControllerState.standingOn != null && _ControllerState.standingOn.GetComponent<Star>() && _ControllerState.IsGrounded)
         {
             _ControllerState.isStarRiding = true;
         }
@@ -466,22 +469,26 @@ public class SuperActor : MonoBehaviour {
         if (_ControllerState.isStarRiding)
         {
             bool stillOnStar = false;
-            for (int i = 0; i < verticalRays; i++)
+            if (_ControllerState.IsGrounded)
             {
-                var rayVector = new Vector2(rayOrigin.x + (i * _horizontalDistanceBetweenArrays), rayOrigin.y);
-                RaycastHit2D ray = Physics2D.Raycast(rayVector, rayDirection, rayDistance, LayerMask.GetMask("Star"));
-
-                if (ray)
+                for (int i = 0; i < verticalRays; i++)
                 {
-                    if (!ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
+                    var rayVector = new Vector2(rayOrigin.x + (i * _horizontalDistanceBetweenArrays), rayOrigin.y);
+                    RaycastHit2D ray = Physics2D.Raycast(rayVector, rayDirection, rayDistance, LayerMask.GetMask("Star"));
+
+                    if (ray)
                     {
-                        ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
-                        addVerticalVelocity(-800f);
-                        stillOnStar = true;
+                        if (!ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
+                        {
+                            ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
+                            addVerticalVelocity(-800f);
+                            stillOnStar = true;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
+
             _ControllerState.isStarRiding = stillOnStar;
         }
     }
@@ -493,7 +500,7 @@ public class SuperActor : MonoBehaviour {
         var rayDirection = Vector2.down;
         var rayOrigin = _cornerBottomLeft;
 
-        if (_ControllerState.standingOn != null && _ControllerState.standingOn.GetComponent<MovingPlatform>())
+        if (_ControllerState.standingOn != null && _ControllerState.standingOn.GetComponent<MovingPlatform>() && _ControllerState.IsGrounded)
         {
             _ControllerState.isPlatRide = true;
         }
@@ -501,20 +508,27 @@ public class SuperActor : MonoBehaviour {
         if (_ControllerState.isPlatRide)
         {
             bool stillOnPlat = false;
-            for (int i = 0; i < verticalRays; i++)
+            if (_ControllerState.IsGrounded)
             {
-                var rayVector = new Vector2(rayOrigin.x + (i * _horizontalDistanceBetweenArrays), rayOrigin.y);
-                RaycastHit2D ray = Physics2D.Raycast(rayVector, rayDirection, rayDistance, LayerMask.GetMask("MovingPlatform"));
-
-                if (ray)
+                for (int i = 0; i < verticalRays; i++)
                 {
-                    if (!ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
+                    var rayVector = new Vector2(rayOrigin.x + (i * _horizontalDistanceBetweenArrays), rayOrigin.y);
+                    RaycastHit2D ray = Physics2D.Raycast(rayVector, rayDirection, rayDistance, LayerMask.GetMask("MovingPlatform"));
+
+                    if (ray)
                     {
-                        ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
-                        addVerticalVelocity(-800f);
-                        stillOnPlat = true;
+                        if (!ray.transform.GetComponent<SuperActor>())
+                        {
+
+                        }
+                        else if (!ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Contains(gameObject))
+                        {
+                            ray.transform.GetComponent<SuperActor>()._ControllerState.standingOnMe.Add(gameObject);
+                            addVerticalVelocity(-800f);
+                            stillOnPlat = true;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
             _ControllerState.isPlatRide = stillOnPlat;

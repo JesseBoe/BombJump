@@ -18,7 +18,8 @@ public class CactimanParameters
     {
         CanJumpOnGround,
         CanJumpAnywhere,
-        CantJump
+        CantJump,
+        CanJumpAnywhereOnce
     }
 
     public enum DashBehavior

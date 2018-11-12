@@ -85,6 +85,10 @@ public class SuperPlayer : MonoBehaviour
         if (player._ControllerState.IsGrounded && !wasGrounded)
         {
             collideUpPlaying = false;
+            if (CactiParameters.JumpRestrictions == CactimanParameters.JumpBehavior.CanJumpAnywhereOnce)
+            {
+                CactiParameters.JumpRestrictions = CactimanParameters.JumpBehavior.CanJumpOnGround;
+            }
             ActorManager.instance.PlaySound("Land", 1f);
         }
         if (!player._ControllerState.isStarRiding)
@@ -485,7 +489,12 @@ public class SuperPlayer : MonoBehaviour
             {
                 return true;
             }
-            else if (timeInAir < .1f && CactiParameters.JumpRestrictions == CactimanParameters.JumpBehavior.CanJumpOnGround)
+            else if (CactiParameters.JumpRestrictions == CactimanParameters.JumpBehavior.CanJumpAnywhereOnce)
+            {
+                CactiParameters.JumpRestrictions = CactimanParameters.JumpBehavior.CanJumpOnGround;
+                return true;
+            }
+            else if (timeInAir < .05f && CactiParameters.JumpRestrictions == CactimanParameters.JumpBehavior.CanJumpOnGround)
             {
                 return true;
             }

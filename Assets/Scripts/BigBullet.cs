@@ -11,6 +11,9 @@ public class BigBullet : MonoBehaviour {
     public GameObject movingPlatform;
     private SuperActor platform;
     public GameObject particleEffect;
+    public GameObject smoke;
+    private float timePassed = 0f;
+
 
 	// Use this for initialization
 	void Start () {
@@ -19,7 +22,14 @@ public class BigBullet : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (!collided)
+        {
+            timePassed += Time.deltaTime;
+            if (timePassed > .02f)
+            {
+                platform.transform.gameObject.layer = 19;
+            }
+        }
 	}
 
     private void FixedUpdate()
@@ -40,18 +50,25 @@ public class BigBullet : MonoBehaviour {
             if (_actor._ControllerState.HasCollisions && !collided)
             {
                 //we hit something.
-                _actor.Active = false;
-                platform.Active = false;
-                collided = true;
-                particleEffect.GetComponent<ParticleSystem>().Play();
-                foreach (var item in _actor._ControllerState.hasCollisionsWith)
+                if (timePassed > .07f)
                 {
-                    if (item.GetComponent<SuperPlayer>())
+                    smoke.transform.parent = null;
+                    smoke.GetComponent<ParticleSystem>().Stop();
+                    GameObject.Destroy(smoke, 5f);
+                    _actor.Active = false;
+                    platform.Active = false;
+                    collided = true;
+                    particleEffect.GetComponent<ParticleSystem>().Play();
+                    ActorManager.instance.PlaySound("BombExplosionFinal", 1);
+                    foreach (var item in _actor._ControllerState.hasCollisionsWith)
                     {
-                        item.GetComponent<SuperPlayer>().Die();
+                        if (item.GetComponent<SuperPlayer>())
+                        {
+                            item.GetComponent<SuperPlayer>().Die();
+                        }
                     }
+                    platform.Remove();
                 }
-                platform.Remove();
             }
         }
     }
@@ -61,6 +78,12 @@ public class BigBullet : MonoBehaviour {
         vel = velocity;
         beenShot = true;
         platform = Instantiate(movingPlatform, transform.position, Quaternion.identity).GetComponent<SuperActor>();
+        if (vel.x < 0)
+        {
+            float rot;
+            rot = smoke.GetComponent<ParticleSystem>().shape.rotation.y;
+            rot = 90f;
+        }
     }
 
     void OnBecameInvisible()

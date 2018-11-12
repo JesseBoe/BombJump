@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/TrainingGrounds.unity
+    path: Assets/Scenes/WIP.unity
+    guid: 694d93a0a5a81dc41a42482597ca1483
+  - enabled: 0
+    path: Assets/Scenes/Finished/TrainingGrounds.unity
     guid: fcd4ef058e67b564b90fdc5a5f243d62
-  - enabled: 1
-    path: Assets/anenegry.unity
+  - enabled: 0
+    path: Assets/Scenes/Other/anenegry.unity
     guid: 6f66dae73906d4641b7a191ac66f1a0d
   m_configObjects: {}
