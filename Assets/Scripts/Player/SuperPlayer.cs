@@ -32,6 +32,7 @@ public class SuperPlayer : MonoBehaviour
     private bool collideUpPlaying = false;
     private float timeholdingobject = 0f;
     private DpadButtons DpadButtons;
+    public int PlayerNumber = 1;
 
     private enum holdObjectType
     {
@@ -41,6 +42,7 @@ public class SuperPlayer : MonoBehaviour
 	// Use this for initialization
 	void Start () {
         DpadButtons = new DpadButtons();
+        DpadButtons.playerNumber = PlayerNumber;
         ActorManager.instance.resettingScene = false; //ZZZ
         if (firstFrame)
         {
@@ -187,7 +189,7 @@ public class SuperPlayer : MonoBehaviour
 
         if (player._ControllerState.IsGrounded && heldObject == null)
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow) || DpadButtons.firstUp)
+            if (DpadButtons.firstUp)
             {
                 RaycastHit2D[] hits = Physics2D.BoxCastAll((Vector2)transform.position + player._Collider.offset, player._Collider.size, 0, Vector2.zero, Mathf.Infinity);
                 if (hits.Length > 0)
@@ -218,7 +220,7 @@ public class SuperPlayer : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("AButton") && canJump())
+        if (DpadButtons.firstA && canJump())
         {
             //player.SetVerticalVelocity(CactiParameters.JumpMagnitude);
             player.Parameters.StarSnap = false;
@@ -240,7 +242,7 @@ public class SuperPlayer : MonoBehaviour
                 player.Parameters.IgnorePlatforms = false;
                 Jumping = false;
             }
-            if (Input.GetKey(KeyCode.Space) || Input.GetButton("AButton"))
+            if (DpadButtons.A)
             {
                 
             }
@@ -265,14 +267,14 @@ public class SuperPlayer : MonoBehaviour
         }
 
         normalizedHorizontal = 0;
-        if (Input.GetKey(KeyCode.LeftArrow) || DpadButtons.left)
+        if (DpadButtons.left)
         {
             normalizedHorizontal += -1;
             //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
             if (State == CactimanParameters.PlayerState.FullControll)
                 player._ControllerState.IsFacingRight = false;
         }
-        if (Input.GetKey(KeyCode.RightArrow) || DpadButtons.right)
+        if (DpadButtons.right)
         {
             normalizedHorizontal += 1;
             //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
@@ -285,13 +287,13 @@ public class SuperPlayer : MonoBehaviour
             normalizedHorizontal = 0;
         }
 
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetButton("XButton") && ActorManager.instance.hasStar && holdType == holdObjectType.Nothing)
+        if (DpadButtons.X && ActorManager.instance.hasStar && holdType == holdObjectType.Nothing)
         {
             holdType = holdObjectType.Star;
             Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
             heldObject = Instantiate(StarPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
         }
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetButtonDown("YButton") && ActorManager.instance.hasBomb && holdType == holdObjectType.Nothing)
+        if (DpadButtons.Y && ActorManager.instance.hasBomb && holdType == holdObjectType.Nothing)
         {
             holdType = holdObjectType.Bomb;
             Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
@@ -336,7 +338,7 @@ public class SuperPlayer : MonoBehaviour
                 case holdObjectType.Bomb:
 
                     heldObject.transform.position = new Vector3(transform.position.x - 20, transform.position.y - 2, transform.position.z + 1);
-                    if (Input.GetKey(KeyCode.D) || Input.GetButton("YButton"))
+                    if (DpadButtons.Y)
                     {
 
                     }
@@ -349,7 +351,7 @@ public class SuperPlayer : MonoBehaviour
                 case holdObjectType.Star:
 
                     heldObject.transform.parent.position = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1);
-                    if (Input.GetKey(KeyCode.S) || Input.GetButton("XButton"))
+                    if (DpadButtons.X)
                     {
 
                     }
@@ -379,11 +381,11 @@ public class SuperPlayer : MonoBehaviour
 
                 if (player._ControllerState.IsFacingRight)
                 {
-                    if (Input.GetKey(KeyCode.UpArrow) || DpadButtons.up)
+                    if (DpadButtons.up)
                     {
                         throwVelocity = new Vector2(150, 400);
                     }
-                    else if (Input.GetKey(KeyCode.DownArrow) || DpadButtons.down)
+                    else if (DpadButtons.down)
                     {
                         throwVelocity = new Vector2(150, -400);
                     }
@@ -394,11 +396,11 @@ public class SuperPlayer : MonoBehaviour
                 }
                 else
                 {
-                    if (Input.GetKey(KeyCode.UpArrow) || DpadButtons.up)
+                    if (DpadButtons.up)
                     {
                         throwVelocity = new Vector2(-150, 400);
                     }
-                    else if (Input.GetKey(KeyCode.DownArrow) || DpadButtons.down)
+                    else if (DpadButtons.down)
                     {
                         throwVelocity = new Vector2(-150, -400);
                     }
