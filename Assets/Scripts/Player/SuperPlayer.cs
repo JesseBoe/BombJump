@@ -31,6 +31,7 @@ public class SuperPlayer : MonoBehaviour
     private bool wasGrounded;
     private bool collideUpPlaying = false;
     private float timeholdingobject = 0f;
+    private DpadButtons DpadButtons;
 
     private enum holdObjectType
     {
@@ -39,6 +40,7 @@ public class SuperPlayer : MonoBehaviour
 
 	// Use this for initialization
 	void Start () {
+        DpadButtons = new DpadButtons();
         ActorManager.instance.resettingScene = false; //ZZZ
         if (firstFrame)
         {
@@ -77,6 +79,7 @@ public class SuperPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DpadButtons.GetDpad();
         if (player._ControllerState.IsCollidingUp && !collideUpPlaying)
         {
             ActorManager.instance.PlaySound("Land", 1f);
@@ -177,7 +180,7 @@ public class SuperPlayer : MonoBehaviour
 
         if (player._ControllerState.IsGrounded && heldObject == null)
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetKeyDown(KeyCode.UpArrow) || DpadButtons.firstUp)
             {
                 RaycastHit2D[] hits = Physics2D.BoxCastAll((Vector2)transform.position + player._Collider.offset, player._Collider.size, 0, Vector2.zero, Mathf.Infinity);
                 if (hits.Length > 0)
@@ -208,7 +211,7 @@ public class SuperPlayer : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.Space) && canJump())
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("AButton") && canJump())
         {
             //player.SetVerticalVelocity(CactiParameters.JumpMagnitude);
             player.Parameters.StarSnap = false;
@@ -230,7 +233,7 @@ public class SuperPlayer : MonoBehaviour
                 player.Parameters.IgnorePlatforms = false;
                 Jumping = false;
             }
-            if (Input.GetKey(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space) || Input.GetButton("AButton"))
             {
                 
             }
@@ -255,14 +258,14 @@ public class SuperPlayer : MonoBehaviour
         }
 
         normalizedHorizontal = 0;
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.LeftArrow) || DpadButtons.left)
         {
             normalizedHorizontal += -1;
             //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
             if (State == CactimanParameters.PlayerState.FullControll)
                 player._ControllerState.IsFacingRight = false;
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.RightArrow) || DpadButtons.right)
         {
             normalizedHorizontal += 1;
             //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
@@ -275,22 +278,13 @@ public class SuperPlayer : MonoBehaviour
             normalizedHorizontal = 0;
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            if (canDash())
-            {
-                State = CactimanParameters.PlayerState.Dashing;
-                //Do Dashing things
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.S) && ActorManager.instance.hasStar && holdType == holdObjectType.Nothing)
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetButton("XButton") && ActorManager.instance.hasStar && holdType == holdObjectType.Nothing)
         {
             holdType = holdObjectType.Star;
             Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
             heldObject = Instantiate(StarPrefab, pos, Quaternion.identity).GetComponentInChildren<SuperActor>();
         }
-        if (Input.GetKeyDown(KeyCode.D) && ActorManager.instance.hasBomb && holdType == holdObjectType.Nothing)
+        if (Input.GetKeyDown(KeyCode.D) || Input.GetButtonDown("YButton") && ActorManager.instance.hasBomb && holdType == holdObjectType.Nothing)
         {
             holdType = holdObjectType.Bomb;
             Vector3 pos = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1f);
@@ -335,7 +329,7 @@ public class SuperPlayer : MonoBehaviour
                 case holdObjectType.Bomb:
 
                     heldObject.transform.position = new Vector3(transform.position.x - 20, transform.position.y - 2, transform.position.z + 1);
-                    if (Input.GetKey(KeyCode.D))
+                    if (Input.GetKey(KeyCode.D) || Input.GetButton("YButton"))
                     {
 
                     }
@@ -348,7 +342,7 @@ public class SuperPlayer : MonoBehaviour
                 case holdObjectType.Star:
 
                     heldObject.transform.parent.position = new Vector3(transform.position.x - 4, transform.position.y + 9f, transform.position.z + 1);
-                    if (Input.GetKey(KeyCode.S))
+                    if (Input.GetKey(KeyCode.S) || Input.GetButton("XButton"))
                     {
 
                     }
@@ -378,11 +372,11 @@ public class SuperPlayer : MonoBehaviour
 
                 if (player._ControllerState.IsFacingRight)
                 {
-                    if (Input.GetKey(KeyCode.UpArrow))
+                    if (Input.GetKey(KeyCode.UpArrow) || DpadButtons.up)
                     {
                         throwVelocity = new Vector2(150, 400);
                     }
-                    else if (Input.GetKey(KeyCode.DownArrow))
+                    else if (Input.GetKey(KeyCode.DownArrow) || DpadButtons.down)
                     {
                         throwVelocity = new Vector2(150, -400);
                     }
@@ -393,11 +387,11 @@ public class SuperPlayer : MonoBehaviour
                 }
                 else
                 {
-                    if (Input.GetKey(KeyCode.UpArrow))
+                    if (Input.GetKey(KeyCode.UpArrow) || DpadButtons.up)
                     {
                         throwVelocity = new Vector2(-150, 400);
                     }
-                    else if (Input.GetKey(KeyCode.DownArrow))
+                    else if (Input.GetKey(KeyCode.DownArrow) || DpadButtons.down)
                     {
                         throwVelocity = new Vector2(-150, -400);
                     }
