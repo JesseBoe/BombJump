@@ -44,6 +44,12 @@ public class SuperPlayer : MonoBehaviour
         ActorManager.instance.resettingScene = false; //ZZZ
         if (firstFrame)
         {
+            if (ActorManager.instance.checkPoint.checkPointNumber == -1)
+            {
+                ActorManager.instance.checkPoint.checkPointNumber = 0;
+                ActorManager.instance.checkPoint.playerSpawnPosition = transform.position;
+            }
+
             transform.position = ActorManager.instance.checkPoint.playerSpawnPosition;
             firstFrame = false;
         }
@@ -53,6 +59,7 @@ public class SuperPlayer : MonoBehaviour
         timeJump = 0;
         dm = FindObjectOfType<DialogManager>();
         DialogBox = GameObject.FindGameObjectWithTag("panel");
+
     }
 
     private void FixedUpdate()

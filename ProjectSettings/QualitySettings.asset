@@ -41,5 +41,8 @@ QualitySettings:
     resolutionScalingFixedDPIFactor: 1
     excludedTargetPlatforms: []
   m_PerPlatformDefaultQuality:
+<<<<<<< HEAD
     Android: 0
+=======
+>>>>>>> 672fd663b211ba96685a0ac3f44e301882593441
     Standalone: 0

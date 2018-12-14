@@ -23,6 +23,7 @@ public class ActorManager : MonoBehaviour
 
     private void Awake()
     {
+        Application.targetFrameRate = 150;
         if (instance == null)
         {
             instance = this;
@@ -57,12 +58,24 @@ public class ActorManager : MonoBehaviour
         source.loop = true;
         source.Play();
     }
+
+    public void ChangeScene(string name)
+    {
+        resettingScene = true;
+        Actors.Clear();
+        checkPoint.checkPointNumber = -1;
+        hasStar = false;
+        hasBomb = false;
+        SceneManager.LoadScene(name);
+    }
 	
 	// Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown(KeyCode.R) || Input.GetButtonDown("LeftBumper"))
         {
             resettingScene = true;
+            hasStar = false;
+            hasBomb = false;
             Actors.Clear();
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
