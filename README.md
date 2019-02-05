@@ -1,6 +1,6 @@
 # DinoMustDie Definitive Deluxe Edition
 (Windows)
-Download: https://drive.google.com/open?id=1rskcfgomk1VGtkrIzQwGFAJC7iD1HXbR
+Download: https://drive.google.com/open?id=1Uviqog7C8Ggh1iLkteCTfUxaB7SBN_wL
 
 (Controls)
 
