@@ -12296,6 +12296,11 @@ Prefab:
       propertyPath: m_Offset.x
       value: 12.5
       objectReference: {fileID: 0}
+    - target: {fileID: 114451886863197516, guid: 40fc7a50c988e9e43a8fb70241294c9f,
+        type: 2}
+      propertyPath: PlayerNumber
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40fc7a50c988e9e43a8fb70241294c9f, type: 2}
   m_IsPrefabAsset: 0
@@ -15018,7 +15023,7 @@ Transform:
   - {fileID: 1361193933}
   - {fileID: 1635188945}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &975711310
 GameObject:
@@ -32136,7 +32141,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1790593596
 GameObject:

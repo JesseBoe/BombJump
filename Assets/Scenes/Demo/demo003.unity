@@ -5745,7 +5745,7 @@ Transform:
   - {fileID: 400742449}
   - {fileID: 1991564885}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &382589015
 MonoBehaviour:
@@ -12860,6 +12860,11 @@ Prefab:
       propertyPath: m_Offset.x
       value: 12.5
       objectReference: {fileID: 0}
+    - target: {fileID: 114451886863197516, guid: 40fc7a50c988e9e43a8fb70241294c9f,
+        type: 2}
+      propertyPath: PlayerNumber
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40fc7a50c988e9e43a8fb70241294c9f, type: 2}
   m_IsPrefabAsset: 0
@@ -13043,7 +13048,7 @@ Transform:
   m_Children:
   - {fileID: 349990452}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &895376356
 GameObject:

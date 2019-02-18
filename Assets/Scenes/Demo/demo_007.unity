@@ -12724,6 +12724,11 @@ Prefab:
       propertyPath: m_Offset.x
       value: 12.5
       objectReference: {fileID: 0}
+    - target: {fileID: 114451886863197516, guid: 40fc7a50c988e9e43a8fb70241294c9f,
+        type: 2}
+      propertyPath: PlayerNumber
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40fc7a50c988e9e43a8fb70241294c9f, type: 2}
   m_IsPrefabAsset: 0

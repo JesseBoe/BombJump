@@ -79,10 +79,6 @@ public class ActorManager : MonoBehaviour
             Actors.Clear();
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            SceneManager.LoadScene("Anenegry");
-        }
 	}
 
     private void FixedUpdate()

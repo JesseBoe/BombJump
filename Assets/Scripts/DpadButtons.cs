@@ -97,15 +97,14 @@ public class DpadButtons {
                 firstY = true;
             }
         }
-
-        if (Input.GetAxis(dhorizontal) >= .6)
+        if (Input.GetAxis(dhorizontal) >= .1)
         {
             right = true;
 
             if (!Lastright)
                 firstUp = true;
         }
-        if (Input.GetAxis(dhorizontal) <= -.6)
+        if (Input.GetAxis(dhorizontal) <= -.1)
         {
             left = true;
 
@@ -113,14 +112,14 @@ public class DpadButtons {
                 firstLeft = true;
         }
 
-        if (Input.GetAxis(dvertical) >= .6)
+        if (Input.GetAxis(dvertical) >= .1)
         {
             up = true;
 
             if (!Lastup)
                 firstUp = true;
         }
-        if (Input.GetAxis(dvertical) <= -.6)
+        if (Input.GetAxis(dvertical) <= -.1)
         {
             down = true;
 
