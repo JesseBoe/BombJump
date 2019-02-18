@@ -99,17 +99,31 @@ public class DpadButtons {
         }
         if (Input.GetAxis(dhorizontal) >= .1)
         {
-            right = true;
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
 
-            if (!Lastright)
-                firstUp = true;
+            }
+            else
+            {
+                right = true;
+
+                if (!Lastright)
+                    firstRight = true;
+            }
         }
         if (Input.GetAxis(dhorizontal) <= -.1)
         {
-            left = true;
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
 
-            if (!Lastleft)
-                firstLeft = true;
+            }
+            else
+            {
+                left = true;
+
+                if (!Lastleft)
+                    firstLeft = true;
+            }
         }
 
         if (Input.GetAxis(dvertical) >= .1)

@@ -267,14 +267,18 @@ public class SuperPlayer : MonoBehaviour
         }
 
         normalizedHorizontal = 0;
-        if (DpadButtons.left)
+        if (DpadButtons.left && DpadButtons.right)
+        {
+
+        }
+        else if (DpadButtons.left)
         {
             normalizedHorizontal += -1;
             //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
             if (State == CactimanParameters.PlayerState.FullControll)
                 player._ControllerState.IsFacingRight = false;
         }
-        if (DpadButtons.right)
+        else if (DpadButtons.right)
         {
             normalizedHorizontal += 1;
             //If you are dashing and grounded you cant change direction. Dash will change your direction if you are in air
