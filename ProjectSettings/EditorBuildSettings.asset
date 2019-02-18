@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Demo/Demo001.unity
     guid: 1df36bc9f63e819429b3ba5354760d9a
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/demo_014.unity
     guid: 1af44145436e55e4a8e96d5e1692dc06
   - enabled: 1
@@ -38,31 +38,31 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Demo/demo_007.unity
     guid: f7c2fab9d7ede0f4388b4a634059fbd7
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/demo_008.unity
     guid: 968b02a1086ab134388b13ceb047cb92
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/demo_009.unity
     guid: cbf520deff640214da7e2313e15c5857
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/demo_010.unity
     guid: d8d2cd6f068396f4a8cd44e2dc825d3b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/demo_011.unity
     guid: da37bd656148cd1488d0564c86cef5c6
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/demo_012.unity
     guid: fb21d525bcb45854a9e2b92b6bdf1438
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/demo_013.unity
     guid: 82ab964e80468ae438890891bb8f0d7c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/demo_15.unity
     guid: e572ab70e7ee2824896b751c84a0226d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/demo_016.unity
     guid: e885e9149784e504d8b8a8ceef5ede8e
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo/end.unity
     guid: 3d040a8bcde516842afaae32bfb3e145
   m_configObjects: {}
